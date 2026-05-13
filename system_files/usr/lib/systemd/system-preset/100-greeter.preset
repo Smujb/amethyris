@@ -1,0 +1,4 @@
+enable bluetooth.service
+enable NetworkManager.service
+enable greetd.service
+enable systemd-homed-firstboot.service

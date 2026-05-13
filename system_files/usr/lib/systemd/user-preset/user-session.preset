@@ -1,0 +1,4 @@
+enable xdg-desktop-portal.service
+enable xdg-desktop-portal-wlr.service
+enable xdg-desktop-portal-gtk.service
+enable mako.service

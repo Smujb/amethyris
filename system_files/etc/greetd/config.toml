@@ -1,0 +1,6 @@
+[default_session]
+command = "sway --config /etc/greetd/sway-config"
+
+[terminal]
+vt = 1
+
