@@ -1,6 +1,30 @@
+### --- build some binaries from source --- ###
+
+# For building additional packages
+FROM docker.io/library/archlinux as archcontainer
+
+RUN pacman -Syu --noconfirm
+
+# Build still
+RUN pacman -S --noconfirm git gcc pkg-config meson pixman wayland wayland-protocols && git clone https://github.com/faergeek/still.git
+WORKDIR /still
+RUN meson setup --buildtype release build && ninja -C build
+
+WORKDIR /
+
+run pacman -S --noconfirm cargo &&  git clone https://github.com/pedroscaff/swaywsr.git
+WORKDIR /swaywsr
+RUN cargo build --release
+
+### --- main image build --- ###
+
 FROM ghcr.io/bootcrew/arch-bootc:latest
 
 ### --- System Packages --- ###
+
+# Copy binaries built earlier
+COPY --from=archcontainer /swaywsr/target/release/swaywsr /usr/bin/swaywsr
+COPY --from=archcontainer /still/build/still /usr/bin/still
 
 # Enable multilib repo for 32 bit driver support
 RUN echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
