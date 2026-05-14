@@ -29,14 +29,14 @@ disk-image $image_name=image_name $image_tag=image_tag $base_dir=base_dir $files
 
 rechunk $image_name=image_name:
     #!/usr/bin/env bash
-    export CHUNKAH_CONFIG_STR="$(podman inspect "${image_name}")"
-    podman run --rm "--mount=type=image,src=${image_name},target=/chunkah" -e CHUNKAH_CONFIG_STR quay.io/coreos/chunkah build --label ostree.bootable=1 --compressed --max-layers 128 | \
-        podman load | \
+    export CHUNKAH_CONFIG_STR="$(sudo podman inspect "${image_name}")"
+    sudo podman run --rm "--mount=type=image,src=${image_name},target=/chunkah" -e CHUNKAH_CONFIG_STR quay.io/coreos/chunkah build --label ostree.bootable=1 --compressed --max-layers 128 | \
+        sudo podman load | \
         sort -n | \
         head -n1 | \
         cut -d, -f2 | \
         cut -d: -f3 | \
-        xargs -I{} podman tag {} "${image_name}"
+        xargs -I{} sudo podman tag {} "${image_name}"
 
 explore-image *ARGS:
     just build {{ARGS}}
