@@ -28,10 +28,10 @@ RUN pacman -S --noconfirm polkit lxqt-policykit
 RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git just podman
 
 # Fonts
-RUN pacman -S --noconfirm noto-fonts noto-fonts-extra noto-fonts-cjk noto-fonts-emoji unicode-emoji
+RUN pacman -S --noconfirm noto-fonts noto-fonts-extra noto-fonts-cjk noto-fonts-emoji unicode-emoji otf-font-awesome
 
 # Audio
-RUN pacman -S --noconfirm pavucontrol wireplumber pipewire pamixer
+RUN pacman -S --noconfirm pavucontrol wireplumber pipewire pamixer pipewire-pulse
 
 # Network stuff
 RUN pacman -S --noconfirm network-manager-applet bluez bluez-tools blueman
