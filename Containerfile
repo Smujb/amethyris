@@ -2,12 +2,22 @@ FROM ghcr.io/bootcrew/arch-bootc:latest
 
 ### --- System Packages --- ###
 
+# Enable multilib repo for 32 bit driver support
+RUN echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
+
 RUN pacman -Syu --noconfirm
 
 # Use LTS kernel (ComposeFS broken on 6.19 and 7.0)
 RUN rm -rf /usr/lib/modules
 RUN pacman -S --noconfirm linux-lts linux-lts-headers
 RUN pacman -R --noconfirm linux
+
+# Install GPU drivers
+RUN pacman -S --noconfirm mesa mesa-utils libva-mesa-driver lib32-mesa \
+    vulkan-radeon lib32-vulkan-radeon \
+    vulkan-intel lib32-vulkan-intel \
+    vulkan-nouveau lib32-vulkan-nouveau \
+    vulkan-tools
 
 # Install sudo for permission escalation
 RUN pacman -S --noconfirm sudo
@@ -25,7 +35,7 @@ RUN pacman -S --noconfirm mako
 RUN pacman -S --noconfirm polkit lxqt-policykit
 
 # Other utilities
-RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git just podman
+RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git just podman less
 
 # Fonts
 RUN pacman -S --noconfirm noto-fonts noto-fonts-extra noto-fonts-cjk noto-fonts-emoji unicode-emoji otf-font-awesome
