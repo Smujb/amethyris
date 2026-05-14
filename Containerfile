@@ -25,7 +25,10 @@ RUN pacman -S --noconfirm mako
 RUN pacman -S --noconfirm polkit lxqt-policykit
 
 # Other utilities
-RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git
+RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git just podman
+
+# Fonts
+RUN pacman -S --noconfirm noto-fonts noto-fonts-extra noto-fonts-cjk noto-fonts-emoji unicode-emoji
 
 # Audio
 RUN pacman -S --noconfirm pavucontrol wireplumber pipewire pamixer
@@ -40,7 +43,7 @@ RUN pacman -S --noconfirm kitty zsh
 RUN pacman -S --noconfirm cliphist wl-clipboard wtype
 
 # General desktop stuff - editor, file manager, etc
-RUN pacman -S --noconfirm helix thunar thunar-archive-plugin file-roller 7zip bzip3 unrar unzip rpmextract dpkg
+RUN pacman -S --noconfirm helix thunar thunar-archive-plugin file-roller 7zip bzip3 unrar unzip rpmextract dpkg gnome-disk-utility
 
 # Flatpak stuff
 RUN pacman -S --noconfirm flatpak bazaar
