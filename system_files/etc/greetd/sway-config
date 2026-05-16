@@ -6,6 +6,3 @@ bindsym Mod4+shift+e exec swaynag \
 -m 'What do you want to do?' \
 -b 'Poweroff' 'systemctl poweroff' \
 -b 'Reboot' 'systemctl reboot'
-
-include /etc/sway/config.d/*
-
