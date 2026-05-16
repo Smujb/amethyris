@@ -2,6 +2,7 @@ enable xdg-desktop-portal.service
 enable xdg-desktop-portal-wlr.service
 enable xdg-desktop-portal-gtk.service
 enable mako.service
-pipewire.service
-pipewire-pulse.service
-	wireplumber.service 
+enable pipewire.service
+enable pipewire-pulse.service
+enable wireplumber.service 
+enable blueman-applet.service
