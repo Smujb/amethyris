@@ -111,6 +111,8 @@ RUN sed -i '/set $term/c\set $term kitty' /etc/sway/config && \
 # Copy necessary files onto the image (e.g. systemd service setup)
 COPY ./system_files /
 
+RUN curl https://raw.githubusercontent.com/sentriz/cliphist/refs/heads/master/contrib/cliphist-rofi-img > /usr/bin/cliphist-rofi-img && chmod +x /usr/bin/cliphist-rofi-img
+
 # Setup systemd services
 RUN systemctl preset-all && systemctl preset-all --global
 
