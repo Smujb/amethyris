@@ -12,6 +12,7 @@ RUN meson setup --buildtype release build && ninja -C build
 
 WORKDIR /
 
+# Build swaywsr
 run pacman -S --noconfirm cargo &&  git clone https://github.com/pedroscaff/swaywsr.git
 WORKDIR /swaywsr
 RUN cargo build --release
@@ -32,9 +33,8 @@ RUN echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
 RUN pacman -Syu --noconfirm
 
 # Use LTS kernel (ComposeFS broken on 6.19 and 7.0)
-RUN rm -rf /usr/lib/modules
-RUN pacman -S --noconfirm linux-lts linux-lts-headers
-RUN pacman -R --noconfirm linux
+RUN rm -rf /usr/lib/modules && pacman -Runs --noconfirm linux
+RUN pacman -S --noconfirm linux-lts linux-lts-headers $(pacman -Ssq 'linux-firmware-*')
 
 # Install GPU drivers
 RUN pacman -S --noconfirm mesa mesa-utils libva-mesa-driver lib32-mesa \
