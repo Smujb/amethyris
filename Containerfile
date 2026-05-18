@@ -55,8 +55,8 @@ RUN pacman -S --noconfirm rofi
 # Notification daemon
 RUN pacman -S --noconfirm mako
 
-# Polkit
-RUN pacman -S --noconfirm polkit lxqt-policykit
+# Polkit & secret service stuff
+RUN pacman -S --noconfirm polkit lxqt-policykit gnome-keyring
 
 # Other utilities
 RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git just podman less
@@ -124,5 +124,8 @@ RUN printf "systemdsystemconfdir=/etc/systemd/system\nsystemdsystemunitdir=/usr/
 RUN printf 'reproducible=yes\nhostonly=no\ncompress=zstd\nadd_dracutmodules+=" bootc "' | tee "/usr/lib/dracut/dracut.conf.d/30-bootcrew-bootc-container-build.conf"
 RUN dracut --force "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)/initramfs.img"
 
-# Fix PAM bullshit
+# Fix PAM bullshit (pam_shells breaks systemd-homed user auth)
 RUN sed -i 's/.*pam_shells.*//g' /etc/pam.d/system-login
+
+# Add gnome keyring PAM support for both greetd and tty login
+RUN echo -e 'auth\toptional\tpam_gnome_keyring.so\nsession\toptional\tpam_gnome_keyring.so auto_start' | tee -a /etc/pam.d/system-login
