@@ -13,7 +13,7 @@ RUN meson setup --buildtype release build && ninja -C build
 WORKDIR /
 
 # Build swaywsr
-run pacman -S --noconfirm cargo &&  git clone https://github.com/pedroscaff/swaywsr.git
+RUN pacman -S --noconfirm cargo &&  git clone https://github.com/pedroscaff/swaywsr.git
 WORKDIR /swaywsr
 RUN cargo build --release
 
@@ -47,7 +47,7 @@ RUN pacman -S --noconfirm mesa mesa-utils libva-mesa-driver lib32-mesa \
 RUN pacman -S --noconfirm sudo
 
 # Greeter and window manager (sway + auto tiling)
-RUN pacman -S --noconfirm greetd greetd-gtkgreet sway swaybg swayidle swaylock xorg-xwayland autotiling-rs waybar
+RUN pacman -S --noconfirm greetd greetd-gtkgreet sway swaybg swayidle swaylock wlr-randr xorg-xwayland autotiling-rs waybar
 
 # Launcher
 RUN pacman -S --noconfirm rofi
@@ -58,8 +58,8 @@ RUN pacman -S --noconfirm mako
 # Polkit & secret service stuff
 RUN pacman -S --noconfirm polkit lxqt-policykit gnome-keyring
 
-# Other utilities
-RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git just podman less
+# Other utilities and dependencies
+RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git just podman less perl
 
 # Fonts
 RUN pacman -S --noconfirm noto-fonts noto-fonts-extra noto-fonts-cjk noto-fonts-emoji unicode-emoji otf-font-awesome
@@ -81,6 +81,12 @@ RUN pacman -S --noconfirm helix thunar thunar-archive-plugin file-roller 7zip bz
 
 # Flatpak stuff
 RUN pacman -S --noconfirm flatpak bazaar
+
+# GAMER stuff
+RUN pacman -S --noconfirm steam mangohud gamescope switcheroo-control
+
+# Scopebuddy
+RUN curl -Lo /usr/bin/scb https://raw.githubusercontent.com/HikariKnight/ScopeBuddy/refs/heads/main/bin/scopebuddy &&  chmod +x /usr/bin/scb
 
 ### --- AUR Packages --- ###
 
