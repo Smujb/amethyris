@@ -40,4 +40,4 @@ rechunk $image_name=image_name:
 
 explore-image *ARGS:
     just build {{ARGS}}
-    podman run --rm -it "{{image_name}}:{{image_tag}}" bash
+    sudo podman run --rm -it "{{image_name}}:{{image_tag}}" bash
