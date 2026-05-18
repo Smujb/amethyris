@@ -2,3 +2,4 @@ enable bluetooth.service
 enable NetworkManager.service
 enable greetd.service
 enable systemd-homed-firstboot.service
+enable switcheroo-control.service
