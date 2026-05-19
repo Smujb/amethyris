@@ -103,9 +103,8 @@ RUN pacman -Syu --noconfirm
 
 # AUR packages
 # wlogout - nice logout menu
-# still - freeze a wayland compositor (used for screenshot tool)
-# swaywsr - sway workspace renamer
-RUN pacman -S --noconfirm chaotic-aur/wlogout
+# obs-vkcapture-git - vulkan layer for OBS game capture on native applications
+RUN pacman -S --noconfirm chaotic-aur/wlogout chaotic-aur/obs-vkcapture-git
 
 ### --- Finalise Image --- ###
 
