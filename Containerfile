@@ -47,7 +47,8 @@ RUN pacman -S --noconfirm mesa mesa-utils libva-mesa-driver lib32-mesa \
 RUN pacman -S --noconfirm sudo
 
 # Greeter and window manager (sway + auto tiling)
-RUN pacman -S --noconfirm greetd greetd-gtkgreet sway swaybg swayidle swaylock wlr-randr xorg-xwayland autotiling-rs waybar
+RUN pacman -S --noconfirm greetd greetd-gtkgreet sway swaybg swayidle swaylock wlr-randr xorg-xwayland autotiling-rs waybar \
+    xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr
 
 # Launcher
 RUN pacman -S --noconfirm rofi
