@@ -224,18 +224,6 @@ jobs:
           set -xeuo pipefail
           echo "date=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)" >> "${GITHUB_OUTPUT}"
 
-      - name: Get mkosi metadata
-        id: imagemetadata
-        env:
-          MANUAL_RELEASE: ${{ inputs.release }}
-        run: |
-          set -xeuo pipefail
-          if [ "$MANUAL_RELEASE" != "" ] ; then
-            echo "distributionversion=${MANUAL_RELEASE}" >> "${GITHUB_OUTPUT}"
-          else
-            echo "distributionversion=$(grep "Release=" mkosi.conf | cut -d= -f2)" >> "${GITHUB_OUTPUT}"
-          fi
-
       - name: Image Metadata
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6
         if: inputs.publish
@@ -243,13 +231,9 @@ jobs:
         with:
           tags: |
             type=raw,value=${{ env.DEFAULT_TAG }}
-            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}
             type=raw,value=${{ env.DEFAULT_TAG }}-${{ github.sha }}
-            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}-${{ github.sha }}
             type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
-            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}.{{date 'YYYYMMDD'}}
             type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}-${{ github.sha }}
-            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}.{{date 'YYYYMMDD'}}-${{ github.sha }}
             type=raw,value={{ date 'YYYYMMDD'}},enable=${{ env.DEFAULT_TAG == 'latest' }}
             type=ref,event=pr
             type=sha,enable=${{ github.event_name == 'pull_request' }}
