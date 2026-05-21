@@ -39,7 +39,7 @@ rechunk $image_name=image_name:
         xargs -I{} sudo podman tag {} "${image_name}"
 
 lint:
-    podman run --rm -it --entrypoint=bootc {{ image }} container lint
+    podman run --rm -it --entrypoint=bootc localhost/${image_name}:{image_tag} container lint
 
 explore-image *ARGS:
     just build {{ARGS}}
