@@ -52,10 +52,11 @@ env:
 
 
 jobs:
-  steps:
-    - name: Lowercase the registry.
-      run: |
-        echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >>${GITHUB_ENV}
+  lowercase-registry:
+    steps:
+      - name: Lowercase the registry.
+        run: |
+          echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >>${GITHUB_ENV}
 
   generate_matrix:
     runs-on: ubuntu-latest
