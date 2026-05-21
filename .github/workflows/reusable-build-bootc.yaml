@@ -52,12 +52,6 @@ env:
 
 
 jobs:
-  lowercase-registry:
-    steps:
-      - name: Lowercase the registry.
-        run: |
-          echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >>${GITHUB_ENV}
-
   generate_matrix:
     runs-on: ubuntu-latest
     outputs:
@@ -143,6 +137,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LOGIN_USER: ${{ github.actor }}
         run: echo "${GITHUB_TOKEN}" | sudo podman login -u "${LOGIN_USER}" --password-stdin "ghcr.io"
+
+      - name: Lowercase the registry.
+        run: |
+          echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >>${GITHUB_ENV}
 
       - name: Push to GHCR
         if: inputs.publish
@@ -307,6 +305,10 @@ jobs:
           pattern: ${{ env.IMAGE_NAME }}-*
           merge-multiple: true
           path: /tmp/artifacts
+
+      - name: Lowercase the registry.
+        run: |
+          echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >>${GITHUB_ENV}
 
       - name: Publish manifest with unified architecture and sign
         shell: bash
