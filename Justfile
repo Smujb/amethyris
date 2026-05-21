@@ -38,6 +38,9 @@ rechunk $image_name=image_name:
         cut -d: -f3 | \
         xargs -I{} sudo podman tag {} "${image_name}"
 
+lint:
+    podman run --rm -it --entrypoint=bootc {{ image }} container lint
+
 explore-image *ARGS:
     just build {{ARGS}}
     sudo podman run --rm -it "{{image_name}}:{{image_tag}}" bash
