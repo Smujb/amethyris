@@ -23,7 +23,7 @@ bootc $image_name=image_name $image_tag=image_tag *ARGS:
 disk-image $image_name=image_name $image_tag=image_tag $base_dir=base_dir $filesystem=filesystem:
     #!/usr/bin/env bash
     if [ ! -e "${base_dir}/bootable.img" ] ; then
-        fallocate -l 20G "${base_dir}/bootable.img"
+        fallocate -l 30G "${base_dir}/bootable.img"
     fi
     just bootc $image_name $image_tag install to-disk --composefs-backend --via-loopback /data/bootable.img --filesystem "${filesystem}" --wipe --bootloader systemd
 
