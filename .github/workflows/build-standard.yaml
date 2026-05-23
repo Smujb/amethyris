@@ -11,7 +11,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 1 * * TUE"
+    - cron: '05 10 * * *'  # 10:05am UTC everyday
   merge_group:
   workflow_dispatch:
 
