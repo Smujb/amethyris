@@ -78,7 +78,7 @@ RUN pacman -S --noconfirm kitty zsh zsh-autosuggestions zsh-completions zsh-synt
 RUN pacman -S --noconfirm cliphist wl-clipboard wtype
 
 # General desktop stuff - editor, file manager, etc
-RUN pacman -S --noconfirm helix thunar thunar-archive-plugin file-roller 7zip bzip3 unrar unzip rpmextract dpkg gnome-disk-utility
+RUN pacman -S --noconfirm helix thunar thunar-archive-plugin gvfs file-roller 7zip bzip3 unrar unzip rpmextract dpkg gnome-disk-utility
 
 # Flatpak stuff
 RUN pacman -S --noconfirm flatpak bazaar

@@ -7,3 +7,4 @@ enable pipewire-pulse.service
 enable wireplumber.service 
 enable blueman-applet.service
 enable gnome-keyring-daemon.service
+enable xdg-user-dirs.service
