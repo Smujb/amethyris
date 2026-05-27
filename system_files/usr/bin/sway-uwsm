@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+uwsm start sway.desktop

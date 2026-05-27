@@ -46,8 +46,8 @@ RUN pacman -S --noconfirm mesa mesa-utils libva-mesa-driver lib32-mesa \
 # Install sudo for permission escalation
 RUN pacman -S --noconfirm sudo
 
-# Greeter and window manager (sway + auto tiling)
-RUN pacman -S --noconfirm greetd greetd-gtkgreet sway swaybg swayidle swaylock wlr-randr xorg-xwayland autotiling-rs waybar \
+# Greeter and window manager (sway + uwsm + auto tiling)
+RUN pacman -S --noconfirm greetd greetd-gtkgreet sway swaybg swayidle swaylock wlr-randr uwsm xorg-xwayland autotiling-rs waybar \
     xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr
 
 # Launcher
@@ -123,9 +123,7 @@ RUN curl https://raw.githubusercontent.com/sentriz/cliphist/refs/heads/master/co
 RUN systemctl preset-all && systemctl preset-all --global
 
 # Regenerate initramfs
-RUN mkdir -p /var/tmp
-RUN mkdir -p /usr/lib/dracut/dracut.conf.d/
-RUN mkdir -p /var/roothome
+RUN mkdir -p /var/tmp /usr/lib/dracut/dracut.conf.d/ /var/roothome
 RUN printf "systemdsystemconfdir=/etc/systemd/system\nsystemdsystemunitdir=/usr/lib/systemd/system\n" | tee /usr/lib/dracut/dracut.conf.d/30-bootcrew-fix-bootc-module.conf
 RUN printf 'reproducible=yes\nhostonly=no\ncompress=zstd\nadd_dracutmodules+=" bootc "' | tee "/usr/lib/dracut/dracut.conf.d/30-bootcrew-bootc-container-build.conf"
 RUN dracut --force "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)/initramfs.img"

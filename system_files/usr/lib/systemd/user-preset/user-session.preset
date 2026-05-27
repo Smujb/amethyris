@@ -8,3 +8,4 @@ enable wireplumber.service
 enable blueman-applet.service
 enable gnome-keyring-daemon.service
 enable xdg-user-dirs.service
+disable waybar.service
