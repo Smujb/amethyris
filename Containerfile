@@ -32,9 +32,8 @@ RUN echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
 
 RUN pacman -Syu --noconfirm
 
-# Use LTS kernel (ComposeFS broken on 6.19 and 7.0)
-RUN rm -rf /usr/lib/modules && pacman -Runs --noconfirm linux
-RUN pacman -S --noconfirm linux-lts linux-lts-headers $(pacman -Ssq 'linux-firmware-*')
+# Insure headers and firmware are properly installed
+RUN pacman -S --noconfirm linux-firmware linux-headers
 
 # Install GPU drivers
 RUN pacman -S --noconfirm mesa mesa-utils libva-mesa-driver lib32-mesa \
