@@ -35,7 +35,7 @@ on:
         description: "Use cleanup action from ublue to get more storage on CI"
         required: false
         type: boolean
-        default: false
+        default: true
     secrets:
       SIGNING_SECRET:
         description: "The private key used to sign the image"
