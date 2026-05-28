@@ -21,6 +21,9 @@ RUN cargo build --release
 
 FROM ghcr.io/bootcrew/arch-bootc:latest
 
+# Homebrew
+COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
+
 ### --- System Packages --- ###
 
 # Copy binaries built earlier
