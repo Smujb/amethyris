@@ -68,7 +68,7 @@ RUN pacman -S --noconfirm noto-fonts noto-fonts-extra noto-fonts-cjk noto-fonts-
 RUN pacman -S --noconfirm pavucontrol wireplumber pipewire pamixer pipewire-pulse
 
 # Network stuff
-RUN pacman -S --noconfirm network-manager-applet bluez bluez-utils bluez-tools blueman usbutils
+RUN pacman -S --noconfirm network-manager-applet inetutils net-tools bluez bluez-utils bluez-tools blueman usbutils
 
 # Terminal
 RUN pacman -S --noconfirm kitty zsh zsh-autosuggestions zsh-completions zsh-syntax-highlighting
