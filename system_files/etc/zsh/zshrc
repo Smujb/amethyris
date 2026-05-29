@@ -1,0 +1,4 @@
+#!/usr/bin/env zsh
+
+alias hx=helix
+emulate sh -c 'source /etc/profile.d/brew.sh'
