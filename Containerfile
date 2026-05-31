@@ -120,7 +120,7 @@ RUN sed -i '/set $term/c\set $term kitty' /etc/sway/config && \
 COPY ./system_files /
 
 # Ensure interactive bash shells have the same workarounds as zsh
-RUN echo -e 'alias hx=helix\nsource /etc/profile.d/brew.sh' | tee -a /etc/bash.bashrc
+RUN echo -e 'source /etc/profile.d/brew.sh' | tee -a /etc/bash.bashrc
 
 RUN curl https://raw.githubusercontent.com/sentriz/cliphist/refs/heads/master/contrib/cliphist-rofi-img > /usr/bin/cliphist-rofi-img && chmod +x /usr/bin/cliphist-rofi-img
 
@@ -138,3 +138,6 @@ RUN sed -i 's/.*pam_shells.*//g' /etc/pam.d/system-login
 
 # Add gnome keyring PAM support for both greetd and tty login
 RUN echo -e 'auth\toptional\tpam_gnome_keyring.so\nsession\toptional\tpam_gnome_keyring.so auto_start' | tee -a /etc/pam.d/system-login
+
+# Run helix when the user types hx, as intended upstream
+RUN sudo ln -s $(which helix) /usr/bin/hx
