@@ -62,7 +62,7 @@ RUN pacman -S --noconfirm mako
 RUN pacman -S --noconfirm polkit lxqt-policykit gnome-keyring
 
 # Other utilities and dependencies
-RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git just podman less perl
+RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git just podman less perl man mokutil
 
 # Fonts
 RUN pacman -S --noconfirm noto-fonts noto-fonts-extra noto-fonts-cjk noto-fonts-emoji unicode-emoji otf-font-awesome
@@ -115,7 +115,7 @@ RUN pacman -S --noconfirm chaotic-aur/wlogout chaotic-aur/obs-vkcapture-git
 RUN sed -i '/set $term/c\set $term kitty' /etc/sway/config && \
   sed -i '/set $menu/c\set $menu rofi \
         -terminal $term -show combi -combi-modes drun'  /etc/sway/config
-  
+
 # Copy necessary files onto the image (e.g. systemd service setup)
 COPY ./system_files /
 
