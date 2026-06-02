@@ -62,7 +62,7 @@ RUN pacman -S --noconfirm mako
 RUN pacman -S --noconfirm polkit lxqt-policykit gnome-keyring
 
 # Other utilities and dependencies
-RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git just podman less perl man mokutil
+RUN pacman -S --noconfirm grim slurp nwg-look fastfetch git just podman less perl man man-db man-pages mokutil
 
 # Fonts
 RUN pacman -S --noconfirm noto-fonts noto-fonts-extra noto-fonts-cjk noto-fonts-emoji unicode-emoji otf-font-awesome
