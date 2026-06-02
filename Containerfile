@@ -74,7 +74,7 @@ RUN pacman -S --noconfirm pavucontrol wireplumber pipewire pamixer pipewire-puls
 RUN pacman -S --noconfirm network-manager-applet inetutils net-tools bluez bluez-utils bluez-tools blueman usbutils
 
 # Terminal
-RUN pacman -S --noconfirm kitty zsh
+RUN pacman -S --noconfirm kitty zsh distrobox
 
 # Clipboard stuff
 RUN pacman -S --noconfirm cliphist wl-clipboard wtype
