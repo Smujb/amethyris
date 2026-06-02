@@ -3,3 +3,4 @@ enable NetworkManager.service
 enable greetd.service
 enable systemd-homed-firstboot.service
 enable switcheroo-control.service
+enable systemd-zram-setup@zram0.service
