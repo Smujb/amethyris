@@ -136,6 +136,9 @@ RUN echo -e 'auth\toptional\tpam_gnome_keyring.so\nsession\toptional\tpam_gnome_
 # Run helix when the user types hx, as intended upstream
 RUN sudo ln -s $(which helix) /usr/bin/hx
 
+# Fix rootless podman
+RUN setcap -r /usr/bin/newuidmap && setcap -r /usr/bin/newgidmap && chmod u+s /usr/bin/newuidmap /usr/bin/newgidmap
+
 
 ### --- OS Release Info --- ###
 
