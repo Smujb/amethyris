@@ -127,12 +127,6 @@ RUN curl https://raw.githubusercontent.com/sentriz/cliphist/refs/heads/master/co
 # Setup systemd services
 RUN systemctl preset-all && systemctl preset-all --global
 
-# Regenerate initramfs
-RUN mkdir -p /var/tmp /usr/lib/dracut/dracut.conf.d/ /var/roothome
-RUN printf "systemdsystemconfdir=/etc/systemd/system\nsystemdsystemunitdir=/usr/lib/systemd/system\n" | tee /usr/lib/dracut/dracut.conf.d/30-bootcrew-fix-bootc-module.conf
-RUN printf 'reproducible=yes\nhostonly=no\ncompress=zstd\nadd_dracutmodules+=" bootc "' | tee "/usr/lib/dracut/dracut.conf.d/30-bootcrew-bootc-container-build.conf"
-RUN dracut --force "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)/initramfs.img"
-
 # Fix PAM bullshit (pam_shells breaks systemd-homed user auth)
 RUN sed -i 's/.*pam_shells.*//g' /etc/pam.d/system-login
 
@@ -141,3 +135,38 @@ RUN echo -e 'auth\toptional\tpam_gnome_keyring.so\nsession\toptional\tpam_gnome_
 
 # Run helix when the user types hx, as intended upstream
 RUN sudo ln -s $(which helix) /usr/bin/hx
+
+
+### --- OS Release Info --- ###
+
+# Variables for image identification
+ARG IMAGE_NAME="Amethyris"
+ARG HOSTNAME="amethyris"
+ARG HOME_URL="https://github.com/Smujb/amethyris"
+ARG SUPPORT_URL="https://github.com/Smujb/amethyris"
+ARG ID="amethyris"
+ARG ID_LIKE="arch"
+ARG BUILD_ID="rolling"
+ARG LOGO=archlinux-logo
+
+# Ensure our image identifies itself correctly
+RUN cat > /usr/lib/os-release <<EOF
+NAME=$IMAGE_NAME
+ID=$ID
+ID_LIKE=$ID_LIKE
+BUILD_ID=$BUILD_ID
+PRETTY_NAME=$IMAGE_NAME
+HOME_URL=$HOME_URL
+SUPPORT_URL=$SUPPORT_URL
+LOGO=$LOGO
+DEFAULT_HOSTNAME=$HOSTNAME
+EOF
+
+# Copy the files to /etc
+RUN cp /usr/lib/os-release /etc/os-release
+
+
+### --- Regenerate Initramfs --- ###
+
+RUN mkdir -p /var/tmp /var/roothome
+RUN dracut --force "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)/initramfs.img"
