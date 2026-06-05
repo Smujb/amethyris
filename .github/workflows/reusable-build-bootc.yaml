@@ -81,8 +81,15 @@ jobs:
       matrix: ${{ fromJson(needs.generate_matrix.outputs.matrix) }}
     runs-on: ${{ matrix.platform == 'amd64' && 'ubuntu-24.04' || 'ubuntu-24.04-arm' }}
     steps:
+      - name: Free disk space
+        uses: hastd/free-disk-space@68572aeaadb7f76bd408246328e95926323402b5 # v0.1.2
+        with:
+          exclude: |
+            /opt/hostedtoolcache/Python
+          skip-if-available: "64G"
+      
       - name: Mount BTRFS for podman storage
-        if: matrix.platform != 'arm64' && inputs.cleanup_action
+        if: inputs.cleanup_action
         uses: ublue-os/container-storage-action@dc1f4c8f17b672069e921f001132f7cf98a423a6
         continue-on-error: true
         with:
