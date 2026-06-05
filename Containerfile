@@ -110,12 +110,6 @@ RUN pacman -S --noconfirm chaotic-aur/wlogout chaotic-aur/obs-vkcapture-git
 
 ### --- Finalise Image --- ###
 
-# Edit sway config to change default menu and terminal
-# maybe I should have it import (at least parts of) my config later? probably just put in ./system_files
-RUN sed -i '/set $term/c\set $term kitty' /etc/sway/config && \
-  sed -i '/set $menu/c\set $menu rofi \
-        -terminal $term -show combi -combi-modes drun'  /etc/sway/config
-
 # Copy necessary files onto the image (e.g. systemd service setup)
 COPY ./system_files /
 
