@@ -162,7 +162,7 @@ VERSION_TAG=$VERSION_TAG
 EOF
 
 # Copy the files to /etc
-RUN cp /usr/lib/os-release /etc/os-release
+RUN rm /etc/os-release && ln -s /usr/lib/os-release /etc/os-release
 
 
 ### --- Regenerate Initramfs --- ###

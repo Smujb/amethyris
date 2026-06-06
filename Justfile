@@ -7,8 +7,8 @@ selinux := env("BUILD_SELINUX", "false")
 options := if selinux == "true" { "-v /var/lib/containers:/var/lib/containers:Z -v /etc/containers:/etc/containers:Z -v /sys/fs/selinux:/sys/fs/selinux --security-opt label=type:unconfined_t" } else { "-v /var/lib/containers:/var/lib/containers -v /etc/containers:/etc/containers" }
 container_runtime := env("CONTAINER_RUNTIME", `command -v podman >/dev/null 2>&1 && echo podman || echo docker`)
 
-build *ARGS:
-    sudo {{container_runtime}} build -t "{{image_name}}:{{image_tag}}" . {{ARGS}}
+build $image_name=image_name $image_tag=image_tag *ARGS:
+    sudo {{container_runtime}} build -t "{{image_name}}:{{image_tag}}" . --build-arg VERSION_TAG=$(date -u "+%Y%m%d") {{ARGS}}
 
 bootc $image_name=image_name $image_tag=image_tag *ARGS:
     sudo {{container_runtime}} run \
