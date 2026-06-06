@@ -145,6 +145,7 @@ ARG ID="amethyris"
 ARG ID_LIKE="arch"
 ARG BUILD_ID="rolling"
 ARG LOGO=archlinux-logo
+ARG VERSION_TAG=$VERSION_TAG
 
 # Ensure our image identifies itself correctly
 RUN cat > /usr/lib/os-release <<EOF
@@ -157,6 +158,7 @@ HOME_URL=$HOME_URL
 SUPPORT_URL=$SUPPORT_URL
 LOGO=$LOGO
 DEFAULT_HOSTNAME=$HOSTNAME
+VERSION_TAG=$VERSION_TAG
 EOF
 
 # Copy the files to /etc

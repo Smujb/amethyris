@@ -125,7 +125,7 @@ jobs:
       - name: Build image
         run: |
           set -e
-          sudo env IMAGE_FULL="localhost/${IMAGE_NAME}:${DEFAULT_TAG}" "$(which just)" build
+          sudo env IMAGE_FULL="localhost/${IMAGE_NAME}:${DEFAULT_TAG}" "$(which just)" build --build-arg "VERSION_TAG=${{ steps.labels.outputs.tag }}"
           
       - name: Rechunk image
         if: inputs.rechunk
