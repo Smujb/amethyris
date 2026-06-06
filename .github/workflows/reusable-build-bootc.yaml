@@ -125,7 +125,7 @@ jobs:
       - name: Build image
         run: |
           set -e
-          sudo env IMAGE_FULL="localhost/${IMAGE_NAME}:${DEFAULT_TAG}" "$(which just)" build --build-arg "VERSION_TAG=${{ github.event.pull_request.number }}"
+          sudo env IMAGE_FULL="localhost/${IMAGE_NAME}:${DEFAULT_TAG}" "$(which just)" build --build-arg "VERSION_TAG=${{ date YYYYMMDD }}"
           
       - name: Rechunk image
         if: inputs.rechunk
