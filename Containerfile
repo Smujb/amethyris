@@ -17,12 +17,6 @@ RUN pacman -S --noconfirm cargo &&  git clone https://github.com/pedroscaff/sway
 WORKDIR /swaywsr
 RUN cargo build --release
 
-WORKDIR /
-
-RUN echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
-RUN pacman -Syu --noconfirm libegl libgl obs-studio vulkan-icd-loader cmake gcc lib32-gcc-libs lib32-libegl lib32-libgl lib32-vulkan-icd-loader vulkan-headers && git clone https://github.com/nowrep/obs-vkcapture/ --revision=a9ea91fe1994708067e95d4159852b11b4209a16 && mkdir -p /opt/obs-vkcapture/usr
-WORKDIR /obs-vkcapture
-RUN mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/opt/obs-vkcapture/usr -DCMAKE_BUILD_TYPE=Release .. && make && make install
 
 ### --- main image build --- ###
 
@@ -113,8 +107,8 @@ RUN pacman -Syu --noconfirm
 
 # AUR packages
 # wlogout - nice logout menu
-# obs-vkcapture-git - vulkan layer for OBS game capture on native applications
-RUN pacman -S --noconfirm chaotic-aur/wlogout
+# obs-vkcapture-git - vulkan layer for OBS game capture on native applications. Remove the desktop entry for OBS Studio since we want to use the flatpak version
+RUN pacman -S --noconfirm chaotic-aur/wlogout chaotic-aur/obs-vkcapture-git && rm -f /usr/share/applications/com.obsproject.Studio.desktop
 
 ### --- Finalise Image --- ###
 
