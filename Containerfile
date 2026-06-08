@@ -30,7 +30,6 @@ COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
 # Copy binaries built earlier
 COPY --from=archcontainer /swaywsr/target/release/swaywsr /usr/bin/swaywsr
 COPY --from=archcontainer /still/build/still /usr/bin/still
-COPY --from=archcontainer /opt/obs-vkcapture/usr /usr
 
 # Enable multilib repo for 32 bit driver support
 RUN echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
