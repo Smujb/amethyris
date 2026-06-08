@@ -22,7 +22,7 @@ WORKDIR /
 RUN echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
 RUN pacman -Syu --noconfirm libegl libgl obs-studio vulkan-icd-loader cmake gcc lib32-gcc-libs lib32-libegl lib32-libgl lib32-vulkan-icd-loader vulkan-headers && git clone https://github.com/nowrep/obs-vkcapture/ --revision=a9ea91fe1994708067e95d4159852b11b4209a16 && mkdir -p /opt/obs-vkcapture/usr
 WORKDIR /obs-vkcapture
-RUN mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/opt/obs-vkcapture/usr -DCMAKE_BUILD_TYPE=Release .. && make && make install && ls -R /opt/obs-vkcapture/usr
+RUN mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/opt/obs-vkcapture/usr -DCMAKE_BUILD_TYPE=Release .. && make && make install
 
 ### --- main image build --- ###
 
