@@ -3,10 +3,10 @@
 # For building additional packages
 FROM docker.io/library/archlinux as archcontainer
 
-RUN pacman -Syu --noconfirm
+RUN pacman -Syu --noconfirm --needed base-devel git
 
 # Build still
-RUN pacman -S --noconfirm git gcc pkg-config meson pixman wayland wayland-protocols && git clone https://github.com/faergeek/still.git
+RUN pacman -S --noconfirm gcc pkg-config meson pixman wayland wayland-protocols && git clone https://github.com/faergeek/still.git
 WORKDIR /still
 RUN meson setup --buildtype release build && ninja -C build
 
@@ -16,6 +16,13 @@ WORKDIR /
 RUN pacman -S --noconfirm cargo &&  git clone https://github.com/pedroscaff/swaywsr.git
 WORKDIR /swaywsr
 RUN cargo build --release
+
+WORKDIR /
+
+RUN echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
+RUN pacman -Syu --noconfirm libegl libgl obs-studio vulkan-icd-loader cmake gcc lib32-gcc-libs lib32-libegl lib32-libgl lib32-vulkan-icd-loader vulkan-headers && git clone https://github.com/nowrep/obs-vkcapture/ --revision=a9ea91fe1994708067e95d4159852b11b4209a16 && mkdir -p /opt/obs-vkcapture/usr
+WORKDIR /obs-vkcapture
+RUN mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/opt/obs-vkcapture/usr -DCMAKE_BUILD_TYPE=Release .. && make && make install && ls -R /opt/obs-vkcapture/usr
 
 ### --- main image build --- ###
 
@@ -29,6 +36,7 @@ COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
 # Copy binaries built earlier
 COPY --from=archcontainer /swaywsr/target/release/swaywsr /usr/bin/swaywsr
 COPY --from=archcontainer /still/build/still /usr/bin/still
+COPY --from=archcontainer /opt/obs-vkcapture/usr /usr
 
 # Enable multilib repo for 32 bit driver support
 RUN echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
@@ -106,7 +114,7 @@ RUN pacman -Syu --noconfirm
 # AUR packages
 # wlogout - nice logout menu
 # obs-vkcapture-git - vulkan layer for OBS game capture on native applications
-RUN pacman -S --noconfirm chaotic-aur/wlogout chaotic-aur/obs-vkcapture-git
+RUN pacman -S --noconfirm chaotic-aur/wlogout
 
 ### --- Finalise Image --- ###
 
