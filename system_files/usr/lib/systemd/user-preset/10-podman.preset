@@ -1,2 +1,1 @@
-enable podman.service
 enable podman.socket

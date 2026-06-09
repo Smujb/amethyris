@@ -134,6 +134,8 @@ RUN sudo ln -s $(which helix) /usr/bin/hx
 # Fix rootless podman
 RUN setcap -r /usr/bin/newuidmap && setcap -r /usr/bin/newgidmap && chmod u+s /usr/bin/newuidmap /usr/bin/newgidmap
 
+# Give the greeter a dummy home folder to avoid some errors
+RUN usermod greeter --home /run/greetd
 
 ### --- OS Release Info --- ###
 
