@@ -5,5 +5,5 @@ command = "sway --config /etc/greetd/sway-config"
 source_profile = true
 
 [terminal]
-vt = 1
+vt = "next"
 
