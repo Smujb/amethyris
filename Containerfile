@@ -5,31 +5,51 @@ FROM docker.io/library/archlinux as archcontainer
 
 RUN pacman -Syu --noconfirm --needed base-devel git
 
+WORKDIR /opt
+ENV STILL_DIR=/opt/still
+
 # Build still
 RUN pacman -S --noconfirm gcc pkg-config meson pixman wayland wayland-protocols && git clone https://github.com/faergeek/still.git
-WORKDIR /still
+WORKDIR $STILL_DIR
 RUN meson setup --buildtype release build && ninja -C build
 
-WORKDIR /
+WORKDIR /opt
+ENV SWAYWSR_DIR=/opt/swaywsr
 
 # Build swaywsr
 RUN pacman -S --noconfirm cargo &&  git clone https://github.com/pedroscaff/swaywsr.git
-WORKDIR /swaywsr
+WORKDIR $SWAYWSR_DIR
 RUN cargo build --release
 
+WORKDIR /opt
+ENV BREW_PROXY_DIR=/opt/brew-proxy
+
+# Brew proxy
+RUN git clone https://codeberg.org/HastD/brew-proxy.git
+WORKDIR $BREW_PROXY_DIR
+RUN cargo build --release
 
 ### --- main image build --- ###
 
 FROM ghcr.io/bootcrew/arch-bootc:latest
 
-# Homebrew
-COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
+ENV STILL_DIR=/opt/still
+ENV SWAYWSR_DIR=/opt/swaywsr
+ENV BREW_PROXY_DIR=/opt/brew-proxy
 
 ### --- System Packages --- ###
 
 # Copy binaries built earlier
-COPY --from=archcontainer /swaywsr/target/release/swaywsr /usr/bin/swaywsr
-COPY --from=archcontainer /still/build/still /usr/bin/still
+COPY --from=archcontainer $SWAYWSR_DIR/target/release/swaywsr /usr/bin/swaywsr
+COPY --from=archcontainer $STILL_DIR/build/still /usr/bin/still
+
+# brew-proxy (see https://codeberg.org/HastD/brew-proxy)
+COPY --from=archcontainer $BREW_PROXY_DIR/usr /usr
+COPY --from=archcontainer $BREW_PROXY_DIR/target/release/brew-proxy /usr/bin/brew-proxy
+COPY --from=archcontainer $BREW_PROXY_DIR/target/release/brew-proxy-daemon /usr/libexec/brew-proxy/brew-proxy-daemon
+
+# Install ublue-os brew
+COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
 
 # Enable multilib repo for 32 bit driver support
 RUN echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
