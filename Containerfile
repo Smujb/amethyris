@@ -23,11 +23,21 @@ RUN cargo build --release
 
 WORKDIR /opt
 ENV BREW_PROXY_DIR=/opt/brew-proxy
+RUN mkdir $BREW_PROXY_DIR
+
+# Create a user so makepkg will allow us to run it
+# This user must be able to run sudo without a password in order to escalate privelidges
+RUN useradd --no-create-home --shell=/bin/false build && usermod -L build
+RUN echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN chown -R build $BREW_PROXY_DIR
+USER build
 
 # Brew proxy
-RUN git clone https://codeberg.org/HastD/brew-proxy.git
+COPY ./other_packages/brew-proxy/PKGBUILD $BREW_PROXY_DIR
 WORKDIR $BREW_PROXY_DIR
-RUN cargo build --release
+# We remove the debug package so it doesn't accidentally get copied into the second stage and installed
+RUN makepkg && rm brew-proxy-debug-* -f
 
 ### --- main image build --- ###
 
@@ -44,9 +54,8 @@ COPY --from=archcontainer $SWAYWSR_DIR/target/release/swaywsr /usr/bin/swaywsr
 COPY --from=archcontainer $STILL_DIR/build/still /usr/bin/still
 
 # brew-proxy (see https://codeberg.org/HastD/brew-proxy)
-COPY --from=archcontainer $BREW_PROXY_DIR/usr /usr
-COPY --from=archcontainer $BREW_PROXY_DIR/target/release/brew-proxy /usr/bin/brew-proxy
-COPY --from=archcontainer $BREW_PROXY_DIR/target/release/brew-proxy-daemon /usr/libexec/brew-proxy/brew-proxy-daemon
+COPY --from=archcontainer $BREW_PROXY_DIR/brew-proxy-* .
+RUN pacman -U --noconfirm brew-proxy-*
 
 # Install ublue-os brew
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
