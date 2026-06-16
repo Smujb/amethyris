@@ -7,9 +7,9 @@
 _SHELL=zsh
 
 # Chain load it
-# If shell is already set then the user probably did actually want bash so we don't run this 
+# If $SHELL is already set and bash is still being run then the user probably did actually want bash so we don't run this 
 if command -v $_SHELL >/dev/null 2>&1 && [[ $SHELL != $(which $_SHELL) ]]; then
   export SHELL=$(which $_SHELL)
-  $SHELL && exit
+  exec $SHELL && exit
 fi
 unset _SHELL
