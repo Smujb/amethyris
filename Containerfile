@@ -55,7 +55,7 @@ COPY --from=archcontainer $STILL_DIR/build/still /usr/bin/still
 
 # brew-proxy (see https://codeberg.org/HastD/brew-proxy)
 COPY --from=archcontainer $BREW_PROXY_DIR/brew-proxy-* .
-RUN pacman -U --noconfirm brew-proxy-*
+RUN pacman -U --noconfirm brew-proxy-* && rm -f brew-proxy-*
 
 # Install ublue-os brew
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /
