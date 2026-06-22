@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+echo "source /etc/profile.d/brew.sh" | tee -a /etc/bash.bashrc
+
+# Branding variables
+IMAGE_NAME="Amethyris"
+HOSTNAME="amethyris"
+HOME_URL="https://github.com/Smujb/amethyris"
+SUPPORT_URL="https://github.com/Smujb/amethyris"
+ID="amethyris"
+ID_LIKE="arch"
+BUILD_ID="rolling"
+LOGO=archlinux-logo
+VERSION_TAG=$VERSION_TAG
+
+# Set default hostname
+echo "${HOSTNAME}" > /etc/hostname
+
+# Overwrite os-release
+cat > /usr/lib/os-release <<EOF
+NAME="${IMAGE_NAME}"
+ID="${ID}"
+ID_LIKE="${ID_LIKE}"
+BUILD_ID="${BUILD_ID}"
+PRETTY_NAME="${IMAGE_NAME}"
+HOME_URL="${HOME_URL}"
+SUPPORT_URL="${SUPPORT_URL}"
+LOGO="${LOGO}"
+DEFAULT_HOSTNAME="${HOSTNAME}"
+EOF
