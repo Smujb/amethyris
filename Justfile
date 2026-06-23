@@ -1,5 +1,5 @@
-image_name := env("BUILD_IMAGE_NAME", "arch-bootc")
-image := env("IMAGE_FULL", "arch-bootc:latest")
+image_name := env("BUILD_IMAGE_NAME", "amethyris")
+image := env("IMAGE_FULL", "amethyris:latest")
 image_tag := env("BUILD_IMAGE_TAG", "latest")
 base_dir := env("BUILD_BASE_DIR", ".")
 filesystem := env("BUILD_FILESYSTEM", "ext4")
