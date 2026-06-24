@@ -2,5 +2,6 @@
 set -e
 set -o nounset
 
+rm -rf .sources
 rm -rf "$OUTPUTDIR"/"$IMAGE_ID"*
 rm -rf "$SRCDIR/cache"
