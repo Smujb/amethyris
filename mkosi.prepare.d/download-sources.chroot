@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -uexo pipefail
+
+if [ $1 != "build" ]; then
+  exit
+fi
+
+# Ensure the sources dir exists and is empty
+mkdir -p .sources
+rm -rf .sources/*
+cd .sources
+
+# Prepare swaywsr for an offline build
+git clone https://github.com/pedroscaff/swaywsr.git
+cd swaywsr
+cargo vendor
+echo "[source.crates-io]
+replace-with = \"vendored-sources\"
+
+[source.vendored-sources]
+directory = \"vendor\"" > cargo.toml
+
+# Prepare still for an offline build
+cd ..
+git clone https://github.com/faergeek/still
+cd still
+meson setup --buildtype release build

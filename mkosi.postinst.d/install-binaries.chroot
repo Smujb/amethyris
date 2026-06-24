@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -uexo pipefail
+
+cd .sources
+install swaywsr/target/release/swaywsr /usr/bin
+install still/build/still /usr/bin
