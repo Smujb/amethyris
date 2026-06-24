@@ -5,3 +5,5 @@ set -uexo pipefail
 cd .sources
 install swaywsr/target/release/swaywsr /usr/bin
 install still/build/still /usr/bin
+
+pacman -U ./obs-vkcapture/*.pkg.tar.* ./wlogout/*.pkg.tar.* --noconfirm --disable-sandbox

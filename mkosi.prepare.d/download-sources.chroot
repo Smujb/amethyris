@@ -26,3 +26,14 @@ cd ..
 git clone https://github.com/faergeek/still
 cd still
 meson setup --buildtype release build
+
+# Prepare PKGBUILDs for offline builds
+cd ..
+cp -R ../other_packages/* ./
+cd obs-vkcapture
+env EUID=123 PATH=$(realpath .):$PATH makepkg -o
+
+cd ../wlogout
+# Import necessary pgp key
+gpg --import *.asc
+env EUID=123 PATH=$(realpath .):$PATH makepkg -o
