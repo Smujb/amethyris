@@ -107,9 +107,13 @@ jobs:
         run: |
           set -x
           sudo apt install -y --no-install-recommends bubblewrap debian-archive-keyring python3-gpg python3-hawkey python3-libcomps python3-unbound just
-          git clone https://github.com/systemd/mkosi.git
-          sudo mv mkosi /usr/src/mkosi
-          sudo ln -sf "/usr/src/mkosi/bin/mkosi" /usr/bin/mkosi
+          # mkosi from latest git does not work properly with Arch
+          # git clone https://github.com/systemd/mkosi.git
+          # sudo mv mkosi /usr/src/mkosi
+          # sudo ln -sf "/usr/src/mkosi/bin/mkosi" /usr/bin/mkosi
+      
+      - name: Install mkosi
+        uses: systemd/mkosi@c4c3d793d0f6f0a2f26895de5ed9382396f36bb5
 
       - name: Render configuration (for debugging)
         run: mkosi cat-config --debug
