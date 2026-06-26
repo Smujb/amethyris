@@ -53,7 +53,7 @@ env:
 
 jobs:
   generate_matrix:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -79,7 +79,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.generate_matrix.outputs.matrix) }}
-    runs-on: ${{ matrix.platform == 'amd64' && 'ubuntu-24.04' || 'ubuntu-24.04-arm' }}
+    runs-on: ${{ matrix.platform == 'amd64' && 'ubuntu-26.04' || 'ubuntu-26.04-arm' }}
     steps:
       - name: Free disk space
         uses: hastd/free-disk-space@68572aeaadb7f76bd408246328e95926323402b5 # v0.1.2
@@ -102,48 +102,59 @@ jobs:
           submodules: true
 
       # We need newer podman due to old podman not supporting lots of flags
-      - name: Update podman and install just
+      - name: Install and update dependencies for build
         shell: bash
         run: |
-          set -eux
-          # Require the runner is ubuntu-24.04
-          IDV=$(. /usr/lib/os-release && echo ${ID}-${VERSION_ID})
-          test "${IDV}" = "ubuntu-24.04"
-          # resolute is the next release. The azure.archive.ubuntu.com mirror only carries amd64.
-          # Other architectures like arm64 use ports.ubuntu.com/ubuntu-ports.
-          if [ "$(dpkg --print-architecture)" = "amd64" ]; then
-            mirror="http://azure.archive.ubuntu.com/ubuntu"
-          else
-            mirror="http://ports.ubuntu.com/ubuntu-ports"
-          fi
-          echo "deb ${mirror} resolute universe main" | sudo tee /etc/apt/sources.list.d/resolute.list
-          /bin/time -f '%E %C' sudo apt update
-          # skopeo is currently older in resolute for some reason hence --allow-downgrades
-          /bin/time -f '%E %C' sudo apt install -y --allow-downgrades crun/resolute buildah/resolute podman/resolute skopeo/resolute just/resolute
-          podman --version
+          set -x
+          sudo apt install -y --no-install-recommends bubblewrap debian-archive-keyring python3-gpg python3-hawkey python3-libcomps python3-unbound just
+          # mkosi from latest git does not work properly with Arch
+          # git clone https://github.com/systemd/mkosi.git
+          # sudo mv mkosi /usr/src/mkosi
+          # sudo ln -sf "/usr/src/mkosi/bin/mkosi" /usr/bin/mkosi
       
+      - name: Install mkosi
+        uses: systemd/mkosi@c4c3d793d0f6f0a2f26895de5ed9382396f36bb5
+
+      - name: Render configuration (for debugging)
+        run: mkosi cat-config --debug
+          
       - name: Build image
+        id: build
+        env:
+          CI_MKOSI_PROFILES: ${{ inputs.profiles }}
+          CI_MKOSI_RELEASE: ${{ inputs.release }}
+          IMAGE_FULL: localhost/${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}
         run: |
           set -e
-          sudo env IMAGE_FULL="localhost/${IMAGE_NAME}:${DEFAULT_TAG}" "$(which just)" build
-          
+          RELEASE_ARGUMENTS=()
+          if [ "$CI_MKOSI_RELEASE" != "" ] ; then
+            RELEASE_ARGUMENTS+=("--release=$CI_MKOSI_RELEASE")
+          fi
+          sudo mkosi -B -ff --debug --profile=bootc-ostree,${CI_MKOSI_PROFILES} ${PROFILE_ARGUMENTS} ${RELEASE_ARGUMENTS}
+
+      - name: Load image
+        id: load
+        run: |
+          set -e
+          env IMAGE_FULL="localhost/${IMAGE_NAME}:${DEFAULT_TAG}" just load
+
       - name: Rechunk image
         if: inputs.rechunk
         run: |
           set -e
-          sudo env IMAGE_FULL="localhost/${IMAGE_NAME}:${DEFAULT_TAG}" "$(which just)" rechunk
+          env IMAGE_FULL="localhost/${IMAGE_NAME}:${DEFAULT_TAG}" just rechunk
 
       - name: Lint image
         run: |
           set -e
-          sudo env IMAGE_FULL="localhost/${IMAGE_NAME}:${DEFAULT_TAG}" "$(which just)" lint
+          env IMAGE_FULL="localhost/${IMAGE_NAME}:${DEFAULT_TAG}" just lint
 
       - name: Login to GitHub Container Registry
         if: inputs.publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LOGIN_USER: ${{ github.actor }}
-        run: echo "${GITHUB_TOKEN}" | sudo podman login -u "${LOGIN_USER}" --password-stdin "ghcr.io"
+        run: echo "${GITHUB_TOKEN}" | podman login -u "${LOGIN_USER}" --password-stdin "ghcr.io"
 
       - name: Lowercase the registry.
         run: |
@@ -170,7 +181,7 @@ jobs:
           # HACK: push two times so layer annotations are present
           # TODO: remove me when https://github.com/containers/podman/issues/27796 fixed
           for _ in $(seq 2); do
-            sudo podman push --retry "${MAX_RETRIES}" --compression-format=zstd --digestfile="${DIGESTFILE}" "localhost/${IMAGE_NAME}:${DEFAULT_TAG}" "${IMAGE_REGISTRY}/${IMAGE_NAME}:${DEFAULT_TAG}-${PLATFORM}" "--sign-passphrase-file=/dev/null" "--sign-by-sigstore-private-key=${PRIVATE_KEY_FILE}"
+            podman push --retry "${MAX_RETRIES}" --compression-format=zstd --digestfile="${DIGESTFILE}" "localhost/${IMAGE_NAME}:${DEFAULT_TAG}" "${IMAGE_REGISTRY}/${IMAGE_NAME}:${DEFAULT_TAG}-${PLATFORM}" "--sign-passphrase-file=/dev/null" "--sign-by-sigstore-private-key=${PRIVATE_KEY_FILE}"
           done
           echo "remote_image_digest=$(< "${DIGESTFILE}")" | tee "${GITHUB_OUTPUT}"
 
@@ -197,7 +208,7 @@ jobs:
 
   manifest:
     name: Create Manifest
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     if: always()
     needs:
       - build_push
@@ -219,7 +230,7 @@ jobs:
           done
 
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
         # This generates a timestamp like what is defined on the ArtifactHub documentation
         # E.G: 2022-02-08T15:38:15Z'
@@ -231,16 +242,32 @@ jobs:
           set -xeuo pipefail
           echo "date=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)" >> "${GITHUB_OUTPUT}"
 
+      - name: Get mkosi metadata
+        id: imagemetadata
+        env:
+          MANUAL_RELEASE: ${{ inputs.release }}
+        run: |
+          set -xeuo pipefail
+          if [ "$MANUAL_RELEASE" != "" ] ; then
+            echo "distributionversion=${MANUAL_RELEASE}" >> "${GITHUB_OUTPUT}"
+          else
+            echo "distributionversion=$(grep "Release=" mkosi.conf | cut -d= -f2)" >> "${GITHUB_OUTPUT}"
+          fi
+
       - name: Image Metadata
-        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6
+        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6
         if: inputs.publish
         id: metadata
         with:
           tags: |
             type=raw,value=${{ env.DEFAULT_TAG }}
+            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}
             type=raw,value=${{ env.DEFAULT_TAG }}-${{ github.sha }}
+            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}-${{ github.sha }}
             type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
+            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}.{{date 'YYYYMMDD'}}
             type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}-${{ github.sha }}
+            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}.{{date 'YYYYMMDD'}}-${{ github.sha }}
             type=raw,value={{ date 'YYYYMMDD'}},enable=${{ env.DEFAULT_TAG == 'latest' }}
             type=ref,event=pr
             type=sha,enable=${{ github.event_name == 'pull_request' }}
@@ -251,14 +278,14 @@ jobs:
             io.artifacthub.package.license=${{ env.IMAGE_LICENSE }}
             io.artifacthub.package.logo-url=${{ env.IMAGE_LOGO_URL }}
             io.artifacthub.package.prerelease=false
-            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/${{ github.sha }}/README.md
+            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/README.md
             org.opencontainers.image.created=${{ steps.date.outputs.date }}
             org.opencontainers.image.description=${{ env.IMAGE_DESC }}
-            org.opencontainers.image.documentation=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/${{ github.sha }}/README.md
+            org.opencontainers.image.documentation=https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/README.md
             org.opencontainers.image.licenses=${{ env.IMAGE_LICENSE }}
-            org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/commit/${{ github.sha }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}/commit/${{ github.sha }}
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
-            org.opencontainers.image.url=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/tree/${{ github.sha }}
+            org.opencontainers.image.url=https://github.com/${{ github.repository }}/tree/${{ github.sha }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
 
@@ -269,25 +296,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
         run: echo "${GITHUB_TOKEN}" | podman login -u "${GITHUB_ACTOR}" --password-stdin "${REGISTRY}"
-
-      - name: Update podman and install just
-        shell: bash
-        run: |
-          set -eux
-          # Require the runner is ubuntu-24.04
-          test "$(. /usr/lib/os-release && echo "${ID}-${VERSION_ID}")" = "ubuntu-24.04"
-          # resolute is the next release. The azure.archive.ubuntu.com mirror only carries amd64.
-          # Other architectures like arm64 use ports.ubuntu.com/ubuntu-ports.
-          if [ "$(dpkg --print-architecture)" = "amd64" ]; then
-            mirror="http://azure.archive.ubuntu.com/ubuntu"
-          else
-            mirror="http://ports.ubuntu.com/ubuntu-ports"
-          fi
-          echo "deb ${mirror} resolute universe main" | sudo tee /etc/apt/sources.list.d/resolute.list
-          /bin/time -f '%E %C' sudo apt update
-          # skopeo is currently older in resolute for some reason hence --allow-downgrades
-          /bin/time -f '%E %C' sudo apt install -y --allow-downgrades crun/resolute podman/resolute
-          podman --version
 
       - name: Fetch Build Outputs
         if: inputs.publish
@@ -317,13 +325,13 @@ jobs:
           sudo mkdir -p "/etc/containers/registries.d/"
           echo -e "docker:\n  ${IMAGE_REGISTRY}:\n    use-sigstore-attachments: true" | sudo tee "/etc/containers/registries.d/${REPOSITORY_OWNER}.yaml"
 
+          TARGET_MANIFEST="${IMAGE_REGISTRY}/${IMAGE_NAME}"
+
           for digest_file in /tmp/artifacts/*.txt; do
             # Extract the platform from the file name
             TARGET_PLATFORM="$(basename "${digest_file}" ".txt" | sed 's/.*-//g')"
-            TARGET_IMAGE="$(basename "${digest_file}" ".txt" | grep -Po ".*-" | sed 's/-$//')"
             TARGET_DIGEST="$(< "${digest_file}")"
 
-            TARGET_MANIFEST="${IMAGE_REGISTRY}/${TARGET_IMAGE}"
             if ! podman images | grep -F -e "${TARGET_MANIFEST}" ; then
               podman manifest create "${TARGET_MANIFEST}"
             fi
@@ -333,8 +341,6 @@ jobs:
 
           # We want one per image instead
           for digest_file in $(find /tmp/artifacts/*.txt | cut -f1 -d- | uniq); do
-            TARGET_IMAGE="$(basename "${digest_file}")"
-            TARGET_MANIFEST="${IMAGE_REGISTRY}/${TARGET_IMAGE}"
             while IFS= read -r LABEL; do
               podman manifest annotate --index --annotation "${LABEL}" "${TARGET_MANIFEST}"
             done <<< "${LABELS}"

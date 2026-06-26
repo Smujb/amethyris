@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -uexo pipefail
+
+if [ "$container" != "mkosi" ]; then
+    exec mkosi-chroot "$CHROOT_SCRIPT" "$@"
+fi
+
+# Build obs-vkcapture
+cd .sources/obs-vkcapture
+env EUID=123 PATH=$(realpath .):$PATH makepkg --noprepare --clean --force
+
+cd ../wlogout
+env EUID=123 PATH=$(realpath .):$PATH makepkg --noprepare --clean --force

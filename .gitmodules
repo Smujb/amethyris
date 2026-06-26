@@ -1,0 +1,6 @@
+[submodule "subprojects/arch-bootc-pkgs"]
+	path = subprojects/arch-bootc-pkgs
+	url = https://github.com/hecknt/arch-bootc-pkgs.git
+[submodule "subprojects/homebrew-arch"]
+	path = subprojects/homebrew-arch
+	url = https://github.com/Lumaeris/homebrew-arch

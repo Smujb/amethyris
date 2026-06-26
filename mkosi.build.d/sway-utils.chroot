@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -uexo pipefail
+
+if [ "$container" != "mkosi" ]; then
+    exec mkosi-chroot "$CHROOT_SCRIPT" "$@"
+fi
+
+cd .sources/swaywsr
+cargo build --release
+
+cd ../still
+ninja -C build
