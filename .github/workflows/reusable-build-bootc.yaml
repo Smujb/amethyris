@@ -46,7 +46,7 @@ env:
   IMAGE_DESC: "Opinionated swaywm + Arch Linux image"
   IMAGE_KEYWORDS: "bootc,sway,arch"
   IMAGE_LICENSE: Apache 2.0
-  IMAGE_LOGO_URL: "https://avatars.githubusercontent.com/u/237492973?s=400&v=4"
+  IMAGE_LOGO_URL: "https://raw.githubusercontent.com/JotaRandom/archlinux-artwork/refs/heads/master/logos/archlinux-vert-dark.svg"
   IMAGE_NAME: "${{ inputs.image-name }}"
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
 
@@ -80,6 +80,8 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.generate_matrix.outputs.matrix) }}
     runs-on: ${{ matrix.platform == 'amd64' && 'ubuntu-26.04' || 'ubuntu-26.04-arm' }}
+    outputs:
+      image_version: ${{ steps.getversion.outputs.image_version }}
     steps:
       - name: Free disk space
         uses: hastd/free-disk-space@68572aeaadb7f76bd408246328e95926323402b5 # v0.1.2
@@ -149,6 +151,12 @@ jobs:
           set -e
           env IMAGE_FULL="localhost/${IMAGE_NAME}:${DEFAULT_TAG}" just lint
 
+      - name: Get Version
+        id: getversion
+        run: |
+          set -e
+          echo "image_version=$(cat mkosi.version)" >> "$GITHUB_OUTPUT"
+
       - name: Login to GitHub Container Registry
         if: inputs.publish
         env:
@@ -209,6 +217,7 @@ jobs:
   manifest:
     name: Create Manifest
     runs-on: ubuntu-26.04
+    needs: build_push
     if: always()
     needs:
       - build_push
@@ -253,7 +262,6 @@ jobs:
           else
             echo "distributionversion=$(grep "Release=" mkosi.conf | cut -d= -f2)" >> "${GITHUB_OUTPUT}"
           fi
-          echo "imageversion=$(cat mkosi.version)"
 
       - name: Image Metadata
         uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6
@@ -263,9 +271,9 @@ jobs:
           tags: |
             type=raw,value=${{ env.DEFAULT_TAG }}
             type=raw,value=${{ env.DEFAULT_TAG }}-${{ github.sha }}
-            type=raw,value=${{ env.DEFAULT_TAG }}.{{ steps.imagemetadata.outputs.imageversion }}
-            type=raw,value=${{ env.DEFAULT_TAG }}.{{ steps.imagemetadata.outputs.imageversion }}-${{ github.sha }}
-            type=raw,value={{ steps.imagemetadata.outputs.imageversion }},enable=${{ env.DEFAULT_TAG == 'latest' }}
+            type=raw,value=${{ env.DEFAULT_TAG }}.${{ needs.build_push.outputs.image_version }}
+            type=raw,value=${{ env.DEFAULT_TAG }}.${{ needs.build_push.outputs.image_version }}-${{ github.sha }}
+            type=raw,value=${{ needs.build_push.outputs.image_version }},enable=${{ env.DEFAULT_TAG == 'latest' }}
             type=ref,event=pr
             type=sha,enable=${{ github.event_name == 'pull_request' }}
           labels: |
