@@ -253,6 +253,7 @@ jobs:
           else
             echo "distributionversion=$(grep "Release=" mkosi.conf | cut -d= -f2)" >> "${GITHUB_OUTPUT}"
           fi
+          echo "imageversion=$(cat mkosi.version)"
 
       - name: Image Metadata
         uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6
@@ -261,14 +262,10 @@ jobs:
         with:
           tags: |
             type=raw,value=${{ env.DEFAULT_TAG }}
-            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}
             type=raw,value=${{ env.DEFAULT_TAG }}-${{ github.sha }}
-            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}-${{ github.sha }}
-            type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
-            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}.{{date 'YYYYMMDD'}}
-            type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}-${{ github.sha }}
-            type=raw,value=${{ steps.imagemetadata.outputs.distributionversion }}.{{date 'YYYYMMDD'}}-${{ github.sha }}
-            type=raw,value={{ date 'YYYYMMDD'}},enable=${{ env.DEFAULT_TAG == 'latest' }}
+            type=raw,value=${{ env.DEFAULT_TAG }}.{{ steps.imagemetadata.outputs.imageversion }}
+            type=raw,value=${{ env.DEFAULT_TAG }}.{{ steps.imagemetadata.outputs.imageversion }}-${{ github.sha }}
+            type=raw,value={{ steps.imagemetadata.outputs.imageversion }},enable=${{ env.DEFAULT_TAG == 'latest' }}
             type=ref,event=pr
             type=sha,enable=${{ github.event_name == 'pull_request' }}
           labels: |
