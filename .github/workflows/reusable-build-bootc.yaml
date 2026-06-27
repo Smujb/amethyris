@@ -254,18 +254,6 @@ jobs:
           set -xeuo pipefail
           echo "date=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)" >> "${GITHUB_OUTPUT}"
 
-      - name: Get mkosi metadata
-        id: imagemetadata
-        env:
-          MANUAL_RELEASE: ${{ inputs.release }}
-        run: |
-          set -xeuo pipefail
-          if [ "$MANUAL_RELEASE" != "" ] ; then
-            echo "distributionversion=${MANUAL_RELEASE}" >> "${GITHUB_OUTPUT}"
-          else
-            echo "distributionversion=$(grep "Release=" mkosi.conf | cut -d= -f2)" >> "${GITHUB_OUTPUT}"
-          fi
-
       - name: Image Metadata
         uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6
         if: inputs.publish
@@ -295,7 +283,7 @@ jobs:
             org.opencontainers.image.title=${{ env.IMAGE_NAME }}
             org.opencontainers.image.url=https://github.com/${{ github.repository }}/tree/${{ github.sha }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
+            org.opencontainers.image.version=${{ env.DEFAULT_TAG }}.${{ needs.build_push.outputs.image_version }}
 
       - name: Login to GitHub Container Registry
         if: inputs.publish
