@@ -117,6 +117,10 @@ jobs:
       - name: Install mkosi
         uses: systemd/mkosi@c4c3d793d0f6f0a2f26895de5ed9382396f36bb5
 
+      - name: Set mkosi.version
+        # We need to do this because mkosi.version is not persistent between builds on CI
+        run: skopeo list-tags docker://ghcr.io/smujb/amethyris | jq --arg date "$(date -u +%Y%m%d)" -r '.Tags[] | select(contains($date))' | sort -n | tail -1 > mkosi.version
+
       - name: Render configuration (for debugging)
         run: mkosi cat-config --debug
           
