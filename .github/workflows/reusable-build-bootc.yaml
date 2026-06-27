@@ -119,7 +119,7 @@ jobs:
 
       - name: Set mkosi.version
         # We need to do this because mkosi.version is not persistent between builds on CI
-        run: skopeo list-tags docker://ghcr.io/smujb/amethyris | jq --arg date "$(date -u +%Y%m%d)" -r '.Tags[] | select(startswith($date))' | sort -n | tail -1 > mkosi.version
+        run: skopeo list-tags docker://ghcr.io/smujb/amethyris | jq --arg date "$(date -u +%Y%m%d)" -r '.Tags[] | select(startswith($date+"."))' | sort -n | tail -1 > mkosi.version
 
       - name: Render configuration (for debugging)
         run: mkosi cat-config --debug
