@@ -217,7 +217,6 @@ jobs:
   manifest:
     name: Create Manifest
     runs-on: ubuntu-26.04
-    needs: build_push
     if: always()
     needs:
       - build_push
