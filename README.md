@@ -3,7 +3,7 @@
 > [!WARNING]
 > This is currently in the very early stages of development and things are likely to change significantly. This includes what utilities are included by default. Right now this is mainly only intended for my personal use, though I plan to slowly clean it up and make it easier to maintain more broadly.
 
-This is an opinionated bootc image based made using [mkosi](https://github.com/systemd/mkosi/tree/main), specifically using [this template](https://github.com/Smujb/mkosi-arch-boot). A relatively lightweight setup with the sway window manager. I use this alongside [my dotfiles](https://github.com/Smujb/dotfiles).
+This is an opinionated bootc image made using [mkosi](https://github.com/systemd/mkosi/tree/main), specifically using [this template](https://github.com/Smujb/mkosi-arch-boot). A relatively lightweight setup with the sway window manager. I use this alongside [my dotfiles](https://github.com/Smujb/dotfiles).
 
 ## Overview
 
