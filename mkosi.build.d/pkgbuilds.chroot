@@ -7,7 +7,7 @@ if [ "$container" != "mkosi" ]; then
 fi
 
 # Build obs-vkcapture
-# We skip the GPG check here as we have already validated the sources in mkosi.prepare.d and we cannot import keys without a network connection
+# We skip the PGP check here as we have already validated the sources in mkosi.prepare.d and we cannot import keys without a network connection
 cd .sources/obs-vkcapture
 env EUID=123 PATH=$(realpath .):$PATH makepkg --noprepare --clean --force --skippgpcheck
 
