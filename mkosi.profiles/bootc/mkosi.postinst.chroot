@@ -33,31 +33,3 @@ sed -i -e 's, /root, /var/roothome,' /usr/lib/tmpfiles.d/provision.conf > /dev/n
 # Redirect stdout to /dev/null because of some weird stdout issue
 # with newer rpm-ostree: https://github.com/coreos/rpm-ostree/pull/5388#issuecomment-2971623787
 sed -i -e '/^d- \/var\/roothome /d' /usr/lib/tmpfiles.d/provision.conf > /dev/null
-
-# This goes along with the DBPath modification in pacman.conf to make `bootc usroverlay` work properly
-mkdir -p "/usr/lib/sysimage/lib"
-mv "/var/lib/pacman" "/usr/lib/sysimage/lib/pacman"
-
-# Make sure that pacman is using the DB from /usr/lib/sysimage rather than the one in /var 
-tee -a /etc/pacman.conf <<EOL
-
-[options]
-DBPath = /usr/lib/sysimage/lib/pacman/
-EOL
-
-# Add the multilib repo to the final image
-tee -a /etc/pacman.conf <<EOL
-
-[multilib]
-Include = /etc/pacman.d/mirrorlist
-EOL
-
-# Disable the pacman sandbox
-# OCI runtimes (such as containerd) do not have proper support for landlock, 
-# which means pacman breaks when this image is running in a container.
-# In particular, custom images are broken, since pacman does not work when building them.
-sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
-
-# Reinitalise the pacman keyring for future pacman use
-pacman-key --init
-pacman-key --populate

@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+set -xeuo pipefail
+
+# This goes along with the DBPath modification in pacman.conf to make `bootc usroverlay` work properly
+mkdir -p "/usr/lib/sysimage/lib"
+mv "/var/lib/pacman" "/usr/lib/sysimage/lib/pacman"
+
+# Make sure that pacman is using the DB from /usr/lib/sysimage rather than the one in /var 
+tee -a /etc/pacman.conf <<EOL
+
+[options]
+DBPath = /usr/lib/sysimage/lib/pacman/
+EOL
+
+# Add the multilib repo to the final image
+tee -a /etc/pacman.conf <<EOL
+
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+EOL
+
+# Convert the image version into an Arch Linux Archive reference
+UPDATE_DATE="${IMAGE_VERSION:0:4}/${IMAGE_VERSION:4:2}/${IMAGE_VERSION:6:2}"
+
+# Set our mirrorlist to use the Arch Linux Archive instead
+# We sym link this from /etc/pacman.d/mirrorlist using a tmpfiles configuration
+USR_PACMAN_CONF=/usr/share/pacman/pacman.d
+mkdir -p $USR_PACMAN_CONF
+
+cat > $USR_PACMAN_CONF/mirrorlist <<EOF
+Server = https://archive.archlinux.org/repos/${UPDATE_DATE}/\$repo/os/\$arch
+EOF
+
+# Disable the pacman sandbox
+# OCI runtimes (such as containerd) do not have proper support for landlock, 
+# which means pacman breaks when this image is running in a container.
+# In particular, custom images are broken, since pacman does not work when building them.
+sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
+
+# Reinitalise the pacman keyring for future pacman use
+pacman-key --init
+pacman-key --populate
