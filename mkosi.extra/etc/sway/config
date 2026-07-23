@@ -16,7 +16,7 @@ set $right l
 # Your preferred terminal emulator
 set $term kitty
 # Your preferred application launcher
-set $menu rofi -terminal $term -show combi -combi-modes drun
+set $menu fuzzel --terminal $term
 
 ### Output configuration
 #
