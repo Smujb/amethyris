@@ -27,10 +27,12 @@ Other apps should be installed using brew, flatpak or a tarball. If none of thes
 
 ### Package Layering?
 
-Likely never. Arch's rolling nature makes this incredibly annoying to do; this would require us to switch over to building each image with the latest archive for one to stop links from 404ing. That could cause issues with third-party repositories. Partial updates from using `-Sy` and layered system updates with `-Syu` are not reasonable to support either. And even on distros like Fedora which don't have these issues, tools like `rpm-ostree` have proven to be unreliable.
+Possible using [this script](https://github.com/Smujb/bootc-tools/blob/main/build-overlay-ext). Note that you will need to define all the packages you wish to layer in a shell script and pass it to the program, and you will need to rerun it every time you wish to either add/remove a package from the overlay or after calling bootc update (to ensure a new overlay exists for the new deployment).
 
-Sysexts are however potentially in scope for popular utilities that I do not want to make a part of a base image. You can make your own, too, just bear in mind you are responsible for maintaining them.
+This relies on the Arch Linux Archive. As such, no binary repos other than the official (core, extra, multilib) should be used on the image.
 
 ### AUR?
 
-Feel free to use it in a distrobox if you are diligent enough to actually use it responsibly. Support will not be added to the base image largely for the same reasons as layering.
+Regular AUR should in theory work using the above method as long as the PKGBUILDs are built on the image. However, due to this being a community maintained repository, there is no guarantee that a PKGBUILD will work on anything but the absolute latest package list for Arch Linux. Additionally, installing AUR packages using a helper in an automated fashion is a terrible idea.
+
+If you wish to use packages not present on the official Arch repos, I recommend manitaining your own PKGBUILDs. If you wish to use the AUR you can get them from there and manually update using git. Check the PKGBUILD not just for malware but for requring dependencies or versions of dependencies not currently available.
