@@ -21,7 +21,7 @@ The default GUI file manager is Thunar. A few others such as Dolphin are availab
 
 Feel free to grab your favourite editor from brew. Nano and vim are included on the image; other terminal-based editors like neovim or helix or micro are easy enough to get. For GUI-based editors see [Universal Blue's homebrew tap](https://github.com/ublue-os/homebrew-tap/) which has VS Code and Jetbrains Toolbox among others. Other editors may need to be installed more manually.
 
-The default terminal is kitty, but I may end up changing this to foot as it is a more basic default. Most terminals work fine as an AppImage or even a flatpak, and some also offer support for a local installation in `~/.local/share`.
+The default terminal is foot. Most terminals work fine as an AppImage or even a flatpak, and some also offer support for a local installation in `~/.local`.
 
 Other apps should be installed using brew, flatpak or a tarball. If none of these are suitable, you can try distrobox which is also included on the image, or you can make your own image in order to add it. While I am willing to entertain suggestions for new default utilities, most are likely to be rejected.
 
