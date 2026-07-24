@@ -23,7 +23,7 @@ Feel free to grab your favourite editor from brew. Nano and vim are included on 
 
 The default terminal is foot. Most terminals work fine as an AppImage or even a flatpak, and some also offer support for a local installation in `~/.local`.
 
-Other apps should be installed using brew, flatpak or a tarball. If none of these are suitable, you can try distrobox which is also included on the image, or you can make your own image in order to add it. While I am willing to entertain suggestions for new default utilities, most are likely to be rejected.
+Other apps should be installed using brew, flatpak or a tarball. If none of these are suitable, you can try distrobox which is also included on the image, or you can try overlaying them with the script below or make a custom image. While I am willing to entertain suggestions for new default utilities, most are likely to be rejected.
 
 ### Package Layering?
 
