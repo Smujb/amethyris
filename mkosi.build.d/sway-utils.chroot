@@ -6,8 +6,5 @@ if [ "$container" != "mkosi" ]; then
     exec mkosi-chroot "$CHROOT_SCRIPT" "$@"
 fi
 
-cd .sources/swaywsr
-cargo build --release
-
-cd ../still
+cd .sources/still
 ninja -C build
