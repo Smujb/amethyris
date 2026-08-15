@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+CONFEXT="$BUILDROOT/usr/lib/confexts/factory"
+mkdir -p "$CONFEXT"
+cp --archive --no-target-directory --update=none "$BUILDROOT/etc" "$CONFEXT/etc"
