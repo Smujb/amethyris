@@ -12,7 +12,6 @@ profiles := env("BUILD_PROFILES", "")
 default:
     @{{ just }} --list
 
-alias build := build-bootc
 alias i := interactive-build
 
 [script]
@@ -21,6 +20,20 @@ interactive-build:
     profiles=$(echo "$selected" | tr '\n' ' ' | sed 's/ $//')
     {{ just }} build-bootc "$profiles"
 
+build-sysupdate $profiles=profiles:
+    #!/bin/bash
+    
+    for profile in {{profiles}}; do
+        args="$args --profile $profile"
+    done
+
+    mkosi build -B -ff sysupdate --profile=sysupdate ${args}
+
+vm-sysupdate:
+    dd if=/dev/zero of=$(find mkosi.output/amethyris_*_x86-64.raw) bs=1G count=0 seek=50    
+    vmbuddy $(find mkosi.output/amethyris_*_x86-64.raw) 
+
+
 build-bootc $profiles=profiles:
     #!/bin/bash
 
@@ -28,7 +41,7 @@ build-bootc $profiles=profiles:
         args="$args --profile $profile"
     done
 
-    mkosi -B --debug ${args}
+    mkosi -B --debug --profile=bootc ${args}
 
 lint:
     podman run --rm -it --entrypoint=bootc {{image}} container lint
