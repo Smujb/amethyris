@@ -34,7 +34,7 @@ vm-sysupdate:
     vmbuddy $(find mkosi.output/amethyris_*_x86-64.raw) 
 
 apply-sysupdate:
-    mkosi sysupdate -- update --reboot
+    mkosi sysupdate -- update
 
 build-apply-sysupdate $profiles=profiles:
     just build-sysupdate {{profiles}}
