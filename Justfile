@@ -33,9 +33,12 @@ vm-sysupdate:
     dd if=/dev/zero of=$(find mkosi.output/amethyris_*_x86-64.raw) bs=1G count=0 seek=50    
     vmbuddy $(find mkosi.output/amethyris_*_x86-64.raw) 
 
+apply-sysupdate:
+    mkosi sysupdate -- update --reboot
+
 build-apply-sysupdate $profiles=profiles:
     just build-sysupdate {{profiles}}
-    mkosi sysupdate -- update --reboot
+    just apply-sysupdate
 
 build-bootc $profiles=profiles:
     #!/bin/bash
