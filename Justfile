@@ -147,4 +147,4 @@ rechunk:
 clear-cache:
     set -e
     {{ just }} _check-root
-    sudo rm -r mkosi.tools/ mkosi.cache/
+    rm -r mkosi.tools/ mkosi.cache/
