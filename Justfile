@@ -20,6 +20,7 @@ interactive-build:
     profiles=$(echo "$selected" | tr '\n' ' ' | sed 's/ $//')
     {{ just }} build-bootc "$profiles"
 
+# Build .raw files for systemd-sysupdate
 build-sysupdate $profiles=profiles:
     #!/bin/bash
     
@@ -29,16 +30,23 @@ build-sysupdate $profiles=profiles:
 
     mkosi build -B -ff sysupdate --profile=sysupdate ${args}
 
+# Open the generated .raw in a vm
 vm-sysupdate:
     dd if=/dev/zero of=$(find mkosi.output/amethyris_*_x86-64.raw) bs=1G count=0 seek=50    
     vmbuddy $(find mkosi.output/amethyris_*_x86-64.raw) 
 
+# Apply and stage the update for next boot
 apply-sysupdate:
     mkosi sysupdate -- update
 
+# Build and then apply
 build-apply-sysupdate $profiles=profiles:
     just build-sysupdate {{profiles}}
     just apply-sysupdate
+
+# Resize .raw file for writing to a live iso or system
+resize-raw-sysupdate:
+    dd if=/dev/zero of=$(find mkosi.output/amethyris_*_x86-64.raw) bs=1G count=0 seek=25
 
 build-bootc $profiles=profiles:
     #!/bin/bash
