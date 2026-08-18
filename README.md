@@ -23,7 +23,7 @@ When running a local installation you can add your own packages and scripts in m
 
 [Bootc](https://bootc.dev/bootc/) is a Red Hat technology designed for booting OCI containers (docker/podman) on bare metal or virtual machines. Amethyris uses the (currently "experimental") composefs-native backend which is not built on top of rpm or dated technology like [ostree](https://ostreedev.github.io/ostree/introduction/).
 
-Installation currently requires either rebasing from another composefs-native bootc system (`bootc switch ghcr.io/smujb/amethyris:latest`) or using dd to write a generated bootable.img file onto the disk and then resizing the system partition to fill the remaining space. Updating is as simple as running `bootc update`. Note that it is possible to run this locally (build an image, load it into podman, then run `sudo bootc switch --transport containers-storage localhost/amethyris:latest`) but if you want to run this image locally I highly suggest the sysupdate backend.
+Installation currently requires either rebasing from another composefs-native bootc system (`bootc switch ghcr.io/smujb/amethyris:latest`) or using dd to write a generated bootable.img file onto the disk and then resizing the system partition to fill the remaining space. Updating is as simple as running `bootc update`. Note that it is possible to run this locally (build an image, load it into podman, then run `bootc switch --transport containers-storage localhost/amethyris:latest`) but if you want to run this image locally I highly suggest the sysupdate backend.
 
 ### systemd-sysupdate
 
