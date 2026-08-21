@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Copy shim files to the correct location for Debian (any distro would work; Debian's is straightforward)
+mkdir -p $BUILDROOT/usr/lib/shim
+cp $BUILDROOT/usr/share/shim-signed/* $BUILDROOT/usr/lib/shim
+
+# Rename to .signed so they are recognised as signed
+for file in $BUILDROOT/usr/lib/shim/*.efi
+do
+  mv "${file}" "${file}.signed"
+done
