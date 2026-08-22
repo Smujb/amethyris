@@ -76,6 +76,6 @@ Enter a one-time password and confirm it. Then reboot + enable secure boot and y
 
 Enroll a recovery key immediately after booting into your system with `[sudo] systemd-cryptenroll /dev/[disk] --recovery-key`.
 
-Where `/dev/[device]` is the name of the disk with the root partition. This can be found by running `lsblk`. Store it in a safe place such as a password manager, but ensure you have access to it without needing to boot your PC.
+Where `/dev/[disk]` is the name of the disk with the root partition. This can be found by running `lsblk`. Store it in a safe place such as a password manager, but ensure you have access to it without needing to boot your PC.
 
 To re-enable TPM2 auto unlock after using the backup password to log in, run `[sudo] systemd-cryptenroll /dev/[disk] --wipe-slot=tpm2 --tpm2-device=auto`. Reinstall the bootloader with `[sudo] bootctl install` to ensure it is signed with the same keys.
