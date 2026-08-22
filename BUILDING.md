@@ -27,19 +27,19 @@ This .img file can be booted in a VM or installed onto a disk using `dd` in orde
 
 ## sysupdate
 
-Building for testing in a VM:
+### Building for testing in a VM
 
 - `just build-sysupdate` - build the .raw files
 - `just vm-sysupdate` - run the generated .raw in a vm instead; uses [vmbuddy](https://github.com/tulilirockz/vmbuddy)
 
-Building to install using a removable drive:
+### Building to install using a removable drive
 
 - `just build-sysupdate`
 - `just resize-raw-sysupdate` - resize the generated .raw file so it can be used as a live iso
 - [write the big .raw file ending in {arch}.raw to a bootable storage medium like a usb drive]
 - [booted into live environment] `[sudo] systemd-repart --dry-run=no --empty=force --defer-partitions=swap,root,home`
 
-Building to update locally:
+### Building to update locally
 
 - `just build-sysupdate`
 - `just apply-sysupdate` - apply the update in `mkosi.output` using `systemd-sysupdate`
@@ -48,8 +48,13 @@ or
 
 - `just build-apply-sysupdate` - run both build and apply in one command
 
+### Setting up secure boot
+
+[WIP]
+
 > [!WARNING]
-> Make sure you build the system and update it using the same set of secure boot keys. Any time you change the keys the OS is signed with you will need to enter a recovery key or password in order to unlock your encrypted root as the TPM2 unlock will be invalid. You will also need to reinstall the bootloader after booting into the new system to ensure it is signed with the new keys if you have secure boot enabled.
+> Make sure you build the system and update it using the same set of secure boot keys. Any time you change the keys the OS is signed with you will need to enter a recovery key or password in order to unlock your encrypted root as the TPM2 unlock will be invalid.
+> If using secure boot you will need to temporarily disable it, boot up your system and then re-enroll the new keys. You will also need to reinstall the bootloader after booting into the new system to ensure it is signed with the new keys.
 
 Enroll a backup key immediately after booting into your system with `[sudo] systemd-cryptenroll /dev/[disk] --recovery-key`.
 
