@@ -46,7 +46,7 @@ Building to update locally:
 
 or
 
-- `just build-apply-sysupdate` - run both build and apply in one/dev/[disk] --recovery-key
+- `just build-apply-sysupdate` - run both build and apply in one command
 
 > [!WARNING]
 > Make sure you build the system and update it using the same set of secure boot keys. Any time you change the keys the OS is signed with you will need to enter a recovery key or password in order to unlock your encrypted root as the TPM2 unlock will be invalid. You will also need to reinstall the bootloader after booting into the new system to ensure it is signed with the new keys if you have secure boot enabled.
