@@ -27,7 +27,7 @@ This .img file can be booted in a VM or installed onto a disk using `dd` in orde
 
 ## sysupdate
 
-The sysupdate backend requires building with disk encryption and secure boot support. You will need to provide your own keys. If you 
+The sysupdate backend requires building with disk encryption and secure boot support. You will need to provide your own keys. If you run `mkosi genkey` it will create the keys `mkosi.key` and `mkosi.crt` and use them for signing the image.
 
 ### Building for testing in a VM
 
