@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+systemctl reboot --boot-loader-menu=20
