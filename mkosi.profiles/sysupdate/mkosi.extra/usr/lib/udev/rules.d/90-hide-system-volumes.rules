@@ -1,0 +1,11 @@
+# hide system partitions and sysexts from udisks so the file manager doesn't list them
+
+# https://uapi-group.org/specifications/specs/discoverable_partitions_specification/#defined-partition-type-uuids
+# usr, usr-verity, usr-verity-sig (x86-64)
+ENV{ID_PART_ENTRY_TYPE}=="8484680c-9521-48c6-9c11-b0720656f69e|77ff5f63-e7b6-4633-acf4-1565b864c0e6|e7bb33fb-06cf-4e81-8273-e543b413e2e2", ENV{UDISKS_IGNORE}="1"
+
+# sysexts
+KERNEL=="loop*", ATTRS{loop/backing_file}=="/var/lib/extensions/*|/run/extensions/*|/etc/extensions/*", ENV{UDISKS_IGNORE}="1"
+
+# dm-verity devices on top of those
+KERNEL=="dm-*", ATTR{dm/uuid}=="CRYPT-VERITY-*", ENV{UDISKS_IGNORE}="1"
