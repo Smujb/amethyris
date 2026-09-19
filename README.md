@@ -54,3 +54,15 @@ This relies on the Arch Linux Archive. As such, no binary repos other than the o
 Regular AUR should in theory work using the above method as long as the PKGBUILDs are built on the image. However, due to this being a community maintained repository, there is no guarantee that a PKGBUILD will work on anything but the absolute latest package list for Arch Linux. Additionally, installing AUR packages using a helper in an automated fashion is a terrible idea.
 
 If you wish to use packages not present on the official Arch repos, I recommend manitaining your own PKGBUILDs. If you wish to use the AUR you can get them from there and manually update using git. Check the PKGBUILD not just for malware but for requring dependencies or versions of dependencies not currently available.
+
+
+# Credits
+
+- mkosi / systemd and bootc / podman for making this all possible
+
+- Inspiration from [Zirconium](https://github.com/zirconium-dev/zirconium) for the CI and mkosi rewrite (code taken with permission)
+
+- A lot of the basic configuration for the sysupdate version has been taken from [ParticleOS](https://github.com/systemd/particleos) under the LGPLv2.1
+
+- Some code from [AstrOS](https://code.astros-linux.org/AstrOS/AstrOS) has been used as well, with permission
+
