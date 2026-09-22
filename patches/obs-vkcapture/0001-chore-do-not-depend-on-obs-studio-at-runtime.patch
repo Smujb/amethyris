@@ -1,0 +1,27 @@
+From 21f0d73d3180ae6d6a1d9853bd554f0990bc148e Mon Sep 17 00:00:00 2001
+From: alice boars <contact@ffi.lol>
+Date: Tue, 22 Sep 2026 21:47:30 +0300
+Subject: [PATCH] chore: do not depend on obs-studio at runtime
+
+---
+ PKGBUILD | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/PKGBUILD b/PKGBUILD
+index f17ab32..6afa87f 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -8,8 +8,8 @@ pkgdesc='OBS Linux Vulkan/OpenGL game capture'
+ arch=('x86_64')
+ url="https://github.com/nowrep/$pkgbase"
+ license=('GPL-2.0-or-later')
+-depends=('vulkan-icd-loader' 'libgl' 'libegl' 'obs-studio>=28')
+-makedepends=('gcc' 'cmake' 'vulkan-headers' 'lib32-gcc-libs' 'lib32-vulkan-icd-loader' 'lib32-libgl' 'lib32-libegl')
++depends=('vulkan-icd-loader' 'libgl' 'libegl')
++makedepends=('gcc' 'cmake' 'vulkan-headers' 'lib32-gcc-libs' 'lib32-vulkan-icd-loader' 'lib32-libgl' 'lib32-libegl' 'obs-studio>=28')
+ source=("https://github.com/nowrep/$pkgbase/archive/v$pkgver/$pkgbase-$pkgver.tar.gz")
+ sha512sums=('23aed97f5c74f20a683633fc09fb4b9c04178797043439b0723e1e4abb63e85c7532c856a28491e809cba65cd6db31f0b636971b7a3e97c1815c35627101c43c')
+ 
+-- 
+2.55.0
+
