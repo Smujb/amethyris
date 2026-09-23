@@ -9,20 +9,24 @@ fi
 # Ensure the sources dir exists and is empty
 mkdir -p .sources
 rm -rf .sources/*
-cd .sources
+pushd .sources
 
 # Prepare still for an offline build
 git clone https://github.com/faergeek/still
-cd still
+pushd still
 meson setup --buildtype release build
+popd
 
-# Prepare PKGBUILDs for offline builds
-cd ..
-cp -R ../other_packages/* ./
-cd obs-vkcapture
-env EUID=123 PATH=$(realpath .):$PATH makepkg -o
+# Import keys.
+gpg --import ../keys/*.asc
 
-cd ../wlogout
-# Import necessary pgp key
-gpg --import *.asc
+# Prepare PKGBUILDs for offline builds, apply patches.
+cp -R ../thirdparty/* ./
+pushd obs-vkcapture
+git apply ../../patches/obs-vkcapture/*.patch
 env EUID=123 PATH=$(realpath .):$PATH makepkg -o
+popd
+
+pushd wlogout
+env EUID=123 PATH=$(realpath .):$PATH makepkg -o
+popd

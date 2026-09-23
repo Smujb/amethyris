@@ -4,3 +4,9 @@
 [submodule "subprojects/homebrew-arch"]
 	path = subprojects/homebrew-arch
 	url = https://github.com/Lumaeris/homebrew-arch
+[submodule "thirdparty/wlogout"]
+	path = thirdparty/wlogout
+	url = https://aur.archlinux.org/wlogout.git
+[submodule "thirdparty/obs-vkcapture"]
+	path = thirdparty/obs-vkcapture
+	url = https://aur.archlinux.org/obs-vkcapture.git
