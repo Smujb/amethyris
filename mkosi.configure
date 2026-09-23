@@ -7,4 +7,4 @@ DATA=$(jq "." /dev/stdin)
 UPDATE_DATE="${IMAGE_VERSION:0:4}/${IMAGE_VERSION:4:2}/${IMAGE_VERSION:6:2}"
 
 # Update the configuration data to reflect this
-echo $(jq --arg update_date "$UPDATE_DATE" '.Snapshot=$update_date' <<< $DATA) > /dev/stdout
+echo $(jq --arg update_date "$UPDATE_DATE" '.Snapshot=$update_date | .Environment={"SNAPSHOT" : $update_date}' <<< $DATA) > /dev/stdout
