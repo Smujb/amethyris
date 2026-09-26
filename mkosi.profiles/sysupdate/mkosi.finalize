@@ -4,3 +4,6 @@ set -e
 CONFEXT="$BUILDROOT/usr/lib/confexts/factory"
 mkdir -p "$CONFEXT"
 cp --archive --no-target-directory --update=none "$BUILDROOT/etc" "$CONFEXT/etc"
+
+# Remove machine-id to ensure the firstboot services run correctly
+rm $CONFEXT/etc/machine-id
