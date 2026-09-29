@@ -115,6 +115,7 @@ jobs:
         run: |
           set -x
           sudo apt install -y --no-install-recommends bubblewrap debian-archive-keyring python3-gpg python3-hawkey python3-libcomps python3-unbound just curl
+          which curl
 
       - name: Set mkosi.version
         run: |
