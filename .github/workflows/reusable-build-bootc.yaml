@@ -113,7 +113,6 @@ jobs:
         run: |
           set -x
           sudo apt update -y
-          sudo apt upgrade -y
           sudo apt install -y --no-install-recommends bubblewrap debian-archive-keyring python3-gpg python3-hawkey python3-libcomps python3-unbound just curl
           # mkosi from latest git does not work properly with Arch
           # git clone https://github.com/systemd/mkosi.git
