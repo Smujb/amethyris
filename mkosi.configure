@@ -1,10 +1,26 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
+import datetime
+import json
+import os
+import sys
 
-# Grab our input data
-DATA=$(jq "." /dev/stdin)
+# Read configuration from stdin
+input = sys.stdin.readline()
+CONFIG = json.loads(input)
+IMAGE_VERSION = os.environ["IMAGE_VERSION"]
 
 # Convert the image version into an Arch Linux Archive reference
-UPDATE_DATE="${IMAGE_VERSION:0:4}/${IMAGE_VERSION:4:2}/${IMAGE_VERSION:6:2}"
+UPDATE_DATE = f"{IMAGE_VERSION[0:4]}/{IMAGE_VERSION[4:6]}/{IMAGE_VERSION[6:8]}"
 
-# Update the configuration data to reflect this
-echo $(jq --arg update_date "$UPDATE_DATE" '.Snapshot=$update_date | .Environment={"SNAPSHOT" : $update_date}' <<< $DATA) > /dev/stdout
+# And convert that to a UNIX timestamp (12:00 UTC on the day)
+UPDATE_EPOCH = (
+    datetime.datetime.strptime(UPDATE_DATE, "%Y/%m/%d")
+    .astimezone(datetime.timezone.utc)
+    .timestamp()
+)
+
+CONFIG["Snapshot"] = UPDATE_DATE
+CONFIG["SourceDateEpoch"] = int(UPDATE_EPOCH)
+CONFIG["Environment"] = {"SNAPSHOT": UPDATE_DATE}
+
+json.dump(CONFIG, sys.stdout)
