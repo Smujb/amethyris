@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+MAJOR=$(cat archive.lock | tr -d "/")
+MINOR=$(git log $(git last-modified archive.lock | awk '{print $1}' )..HEAD --oneline | wc -l)
+
+printf ${MAJOR}.${MINOR}
+
+if [ $(git status --porcelain | wc -l) -gt 0 ]; then
+  printf "*"
+fi
