@@ -18,6 +18,12 @@ _check-root:
        exit 1
     fi
 
+# Bump Arch Linux Archive pin
+bump-archive:
+    echo $(mkosi latest-snapshot) > archive.lock
+    git add archive.lock
+    git commit -s -m "Update archive.lock"
+
 # Build .raw files for systemd-sysupdate
 [group('sysupdate')]
 build-sysupdate $profiles=profiles:
