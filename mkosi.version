@@ -6,5 +6,5 @@ MINOR=$(git log $(git last-modified archive.lock | awk '{print $1}' )..HEAD --on
 printf ${MAJOR}.${MINOR}
 
 if [ $(git status --porcelain | wc -l) -gt 0 ]; then
-  printf ".dirty"
+  printf ".9999"
 fi
