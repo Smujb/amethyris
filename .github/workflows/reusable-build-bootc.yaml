@@ -122,13 +122,6 @@ jobs:
       - name: Install mkosi
         uses: systemd/mkosi@c4c3d793d0f6f0a2f26895de5ed9382396f36bb5
 
-      - name: Set mkosi.version
-        run: |
-          # We need to do this because mkosi.version is not persistent between builds on CI.
-          # Grab what would be the default image version right now and then use it to see if any other images with this major version have been built yet (we omit the .0 for the search)
-          IMAGE_VERSION=$(./mkosi.bump)
-          skopeo list-tags docker://${IMAGE_REGISTRY}/${IMAGE_NAME} | jq --arg update_date "${IMAGE_VERSION:0:8}" -r '.Tags[] | select(startswith($update_date+"."))' | sort -n | tail -1 > mkosi.version
-
       - name: Render configuration (for debugging)
         run: mkosi cat-config --debug
           
@@ -144,7 +137,7 @@ jobs:
           if [ "$CI_MKOSI_RELEASE" != "" ] ; then
             RELEASE_ARGUMENTS+=("--release=$CI_MKOSI_RELEASE")
           fi
-          sudo mkosi -B -ff --debug --profile=bootc,locales,${CI_MKOSI_PROFILES} ${PROFILE_ARGUMENTS} ${RELEASE_ARGUMENTS}
+          sudo mkosi -ff --debug --profile=bootc,locales,${CI_MKOSI_PROFILES} ${PROFILE_ARGUMENTS} ${RELEASE_ARGUMENTS}
 
       - name: Load image
         id: load
@@ -167,7 +160,7 @@ jobs:
         id: getversion
         run: |
           set -e
-          echo "image_version=$(cat mkosi.version)" >> "$GITHUB_OUTPUT"
+          echo "image_version=$(./mkosi.version)" >> "$GITHUB_OUTPUT"
 
       - name: Login to GitHub Container Registry
         if: inputs.publish

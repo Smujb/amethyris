@@ -27,7 +27,7 @@ build-sysupdate $profiles=profiles:
         args="$args --profile $profile"
     done
 
-    mkosi build -B -ff sysupdate --profile=sysupdate ${args}
+    mkosi build -ff sysupdate --profile=sysupdate ${args}
 
 [group('sysupdate')]
 _find-raw-sysupdate:
@@ -63,7 +63,7 @@ build-bootc $profiles=profiles:
         args="$args --profile $profile"
     done
 
-    mkosi -B --debug --profile=bootc ${args}
+    mkosi --debug --profile=bootc ${args}
 
 # Lint the bootc image
 [group('bootc')]
