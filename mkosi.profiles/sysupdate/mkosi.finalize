@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-# Remove pacman keyring files from the final image - user can run pacman-key --init themselves if they wish to
-rm -rf $BUILDROOT/etc/pacman.d/gnupg
-
 CONFEXT="$BUILDROOT/usr/lib/confexts/factory"
 mkdir -p "$CONFEXT"
 cp --archive --no-target-directory --update=none "$BUILDROOT/etc" "$CONFEXT/etc"
