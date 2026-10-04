@@ -22,7 +22,7 @@ _check-root:
 bump-archive:
     echo $(mkosi latest-snapshot) > archive.lock
     git add archive.lock
-    git commit -s -m "Update archive.lock"
+    git commit -s -m "Update archive.lock to $(cat archive.lock)"
 
 # Build .raw files for systemd-sysupdate
 [group('sysupdate')]
