@@ -120,7 +120,7 @@ jobs:
           # sudo ln -sf "/usr/src/mkosi/bin/mkosi" /usr/bin/mkosi
       
       - name: Install mkosi
-        uses: systemd/mkosi@c4c3d793d0f6f0a2f26895de5ed9382396f36bb5
+        uses: systemd/mkosi@10f43ac773de2320432903e96f6c41cbcf9fc1bb
 
       - name: Set mkosi.version
         run: |
