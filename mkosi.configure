@@ -10,7 +10,12 @@ CONFIG = json.loads(input)
 IMAGE_VERSION = os.environ["IMAGE_VERSION"]
 
 # Convert the image version into an Arch Linux Archive reference
-UPDATE_DATE = f"{IMAGE_VERSION[0:4]}/{IMAGE_VERSION[4:6]}/{IMAGE_VERSION[6:8]}"
+UPDATE_DATE = ""
+with open("archive.lock") as archive_lock:
+    UPDATE_DATE = archive_lock.read().strip()
+
+if UPDATE_DATE == "":
+    raise ValueError("archive.lock not populated")
 
 # And convert that to a UNIX timestamp (12:00 UTC on the day)
 UPDATE_EPOCH = (

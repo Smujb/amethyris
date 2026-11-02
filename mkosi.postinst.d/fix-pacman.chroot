@@ -34,7 +34,3 @@ EOF
 # which means pacman breaks when this image is running in a container.
 # In particular, custom images are broken, since pacman does not work when building them.
 sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
-
-# Reinitalise the pacman keyring for future pacman use
-pacman-key --init
-pacman-key --populate

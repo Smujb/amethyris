@@ -6,10 +6,22 @@ if [ "$container" != "mkosi" ]; then
     exec mkosi-chroot "$CHROOT_SCRIPT" "$@"
 fi
 
-# Build obs-vkcapture
-# We skip the PGP check here as we have already validated the sources in mkosi.prepare.d and we cannot import keys without a network connection
-cd .sources/obs-vkcapture
-env EUID=123 PATH=$(realpath .):$PATH makepkg --noprepare --clean --force --skippgpcheck
+# Move to .sources dir
+pushd .sources
 
-cd ../wlogout
-env EUID=123 PATH=$(realpath .):$PATH makepkg --noprepare --clean --force --skippgpcheck
+# List of all packages to build
+# TODO add bootc when bootc profile is enabled!
+# FIXME should move this to mkosi.prepare so it can be exported globally as an env var across the whole build
+source_pkgs=(
+  obs-vkcapture
+  wlogout
+  brew-proxy
+)
+
+# Build each package
+# We skip the PGP check here as we have already validated the sources in mkosi.prepare.d and we cannot import keys without a network connection
+for pkg in "${source_pkgs[@]}"; do
+  pushd $pkg
+  env EUID=123 makepkg --noprepare --clean --force --skippgpcheck
+  popd
+done

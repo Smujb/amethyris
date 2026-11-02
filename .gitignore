@@ -9,7 +9,6 @@ mkosi.tools.manifest
 mkosi.key
 mkosi.crt
 mkosi.cer
-mkosi.version
 mkosi.rootpw
 mkosi.builddir/
 .mkosi-private
