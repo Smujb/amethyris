@@ -5,4 +5,7 @@ set -uexo pipefail
 cd .sources
 install still/build/still /usr/bin
 
-pacman -U ./obs-vkcapture/*.pkg.tar.* ./wlogout/*.pkg.tar.* --noconfirm --disable-sandbox
+# Install all packages in .sources/[package name]
+# We pipe in yes to auto-accept prompts that default to no, and we ignore exit code 1 by || with true
+# FIXME This is a horrible hack that will become unnecessary once I figure out how to package homebrew for this project
+yes | pacman -U ./*/*.pkg.tar.* --disable-sandbox || true

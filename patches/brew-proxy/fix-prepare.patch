@@ -1,0 +1,24 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index f9141e7..6d24471 100644
+--- a/pkgs/brew-proxy/PKGBUILD
++++ b/pkgs/brew-proxy/PKGBUILD
+@@ -14,8 +14,17 @@ source=("https://codeberg.org/HastD/$pkgname/archive/v$pkgver.zip"
+ sha512sums=('24ee6b127d20466550b9e1e50ddaef5a44f8bb64886e593b4e7b3f4d1c38bb480fcedf54fefcd01686e752f12dc117d334c59f918cd3de7fe7433ced60417586'
+             'f2c8e680a27a158c1c9980c6e64e6eeccf43cd6efe89f362409f51f9fb8f19c57cd390285e5c12f8a3188dff432bcda800270b1bea24bb7fd5927f5f238a334b')
+ 
++prepare() {
++	pushd $pkgname
++	cargo fetch --locked --target "$(rustc -vV | sed -n 's/host: //p')"
++	popd
++}
++
+ build() {
+-	meson setup build -Dprefix=/usr -Dselinux=disabled "${srcdir}/$pkgname"
++	pushd $pkgname
++	cargo build --release
++	popd
++	meson setup build -Dprefix=/usr -Dcargo_build=disabled -Dselinux=disabled "${srcdir}/$pkgname"
+ 	meson compile -C build
+ }
+ 
+
