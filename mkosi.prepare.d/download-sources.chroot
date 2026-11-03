@@ -26,17 +26,8 @@ cp -R ../thirdparty/* ./
 cp -R ../subprojects/arch-bootc-pkgs/pkgs/* ./
 cp -R ../subprojects/homebrew-arch/pkgs/* ./
 
-# List of all packages to build
-# TODO add bootc when bootc profile is enabled!
-# FIXME should move this to mkosi.prepare so it can be exported globally as an env var across the whole build
-source_pkgs=(
-  obs-vkcapture
-  wlogout
-  brew-proxy
-)
-
 # Enter build directory, apply patches, download sources and then leave it
-for pkg in "${source_pkgs[@]}"; do
+for pkg in ${SOURCE_PKGS[@]}; do
   pushd $pkg
   # We use patch instead of git apply as not all pkgbuilds being copied in are from their project root
   [ -d "../../patches/$pkg" ] && patch <../../patches/$pkg/*.patch

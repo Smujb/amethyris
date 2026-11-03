@@ -9,18 +9,9 @@ fi
 # Move to .sources dir
 pushd .sources
 
-# List of all packages to build
-# TODO add bootc when bootc profile is enabled!
-# FIXME should move this to mkosi.prepare so it can be exported globally as an env var across the whole build
-source_pkgs=(
-  obs-vkcapture
-  wlogout
-  brew-proxy
-)
-
 # Build each package
 # We skip the PGP check here as we have already validated the sources in mkosi.prepare.d and we cannot import keys without a network connection
-for pkg in "${source_pkgs[@]}"; do
+for pkg in ${SOURCE_PKGS[@]}; do
   pushd $pkg
   env EUID=123 makepkg --noprepare --clean --force --skippgpcheck
   popd

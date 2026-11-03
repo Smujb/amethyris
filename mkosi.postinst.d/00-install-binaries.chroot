@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -uexo pipefail
+
+cd .sources
+install still/build/still /usr/bin
+
+# Install all packages in .sources/[package name]
+pacman -U ./*/*.pkg.tar.* --disable-sandbox --noconfirm

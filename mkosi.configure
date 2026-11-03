@@ -24,8 +24,18 @@ UPDATE_EPOCH = (
     .timestamp()
 )
 
+# Now we choose which packages to build based on the selected profiles
+source_packages = ["obs-vkcapture", "wlogout", "brew-proxy"]
+profiles = CONFIG.get("Profiles")
+if profiles != None:
+    if "bootc" in profiles: source_packages.append("bootc")
+    if "sysupdate" in profiles: source_packages.append("shim-signed")
+
+pkgs_string = ""
+for pkg in source_packages:
+    pkgs_string += pkg + " "
+
 CONFIG["Snapshot"] = UPDATE_DATE
 CONFIG["SourceDateEpoch"] = int(UPDATE_EPOCH)
-CONFIG["Environment"] = {"SNAPSHOT": UPDATE_DATE}
-
+CONFIG["Environment"] = {"SNAPSHOT": UPDATE_DATE, "SOURCE_PKGS" : pkgs_string}
 json.dump(CONFIG, sys.stdout)
