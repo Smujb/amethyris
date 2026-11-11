@@ -31,7 +31,7 @@ build-sysupdate $profiles=profiles:
 
 [group('sysupdate')]
 _find-raw-sysupdate:
-    find "{{ base_dir }}/mkosi.output" -maxdepth 1 -iname "{{ image_name }}*x86-64.raw"
+    find "{{ base_dir }}/mkosi.output" -maxdepth 1 -iname "{{ image_name }}*x86-64.raw" | sort -nr | head -n1
 
 # Open the generated .raw in a vm
 [group('sysupdate')]
@@ -75,7 +75,7 @@ lint:
 load:
     #!/usr/bin/env bash
     set -x
-    podman load -i "$(find '{{ base_dir }}/mkosi.output' -maxdepth 1 -type d -printf "%T@ ,%p\n" -iname "{{ image_name }}*x86-64" | sort -n | head -n1 | cut -d, -f2)" -q | cut -d: -f3 | xargs -I{} podman tag {} {{image}}
+    podman load -i "$(find '{{ base_dir }}/mkosi.output' -iname "{{ image_name }}*x86-64" -type d  | sort -nr | head -n1)" -q | cut -d: -f3 | xargs -I{} podman tag {} {{image}}
 
 [group('bootc')]
 _bootc *ARGS:
